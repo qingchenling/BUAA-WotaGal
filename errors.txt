@@ -1,0 +1,14 @@
+﻿I'm sorry, but errors were detected in your script. Please correct the
+errors listed below, and try again.
+
+
+File "game/script/core/datastore.rpy", line 30: ':' expected after dictionary key
+    "factor"= 1,\
+           ^
+
+File "game/script/core/datastore.rpy", line 57: expression expected after dictionary key and ':'
+    "charm":,\
+           ^
+
+Ren'Py Version: Ren'Py 8.5.2.26010301
+Mon May 18 00:08:45 2026
