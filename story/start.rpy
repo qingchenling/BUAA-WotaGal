@@ -21,9 +21,9 @@ label start:
 
     # 此处显示各行对话。
 
-    e "您已创建一个新的 Ren'Py 游戏。"
+    e "A Ren'py Game"
 
-    e "当您完善了故事、图片和音乐之后，您就可以向全世界发布了！"
+    e 'second line'
 
     # 此处为游戏结尾。
 
