@@ -34,3 +34,7 @@ Ren'Py 8.5.3
 提交修改前运行 `clean.sh` 或 `clean.bat`。
 
 在 dev 分支开发，当确认可以正常运行后可以通过 Pull Request 向 `main` 分支合并。保证 `main` 分支一定可以正常运行。
+
+## 代码规范
+
+1. 每个 `lable` 必须对应一个`return` 关闭，
