@@ -1,0 +1,79 @@
+# ------------------------------
+# 编译与生成文件（必须忽略）
+# ------------------------------
+# Python 编译文件[reference:4]
+*.pyc
+*.pyo
+*.egg-info
+*.cpython-*.so
+*.cpython-*.pyd
+
+# Ren'Py 编译文件[reference:5][reference:6]
+*.rpyc
+*.rpyb
+*.rpymc
+
+# 构建目录[reference:7]
+/build
+
+# ------------------------------
+# 运行时生成的日志和缓存（必须忽略）
+# ------------------------------
+# Ren'Py 日志文件[reference:8][reference:9]
+log.txt
+errors.txt
+traceback.txt
+lint.txt
+
+# 运行时创建的目录[reference:10][reference:11]
+cache/
+saves/
+tmp/
+temp/
+
+# ------------------------------
+# 操作系统和编辑器文件（推荐忽略）
+# ------------------------------
+# macOS[reference:12]
+.DS_Store
+.AppleDouble
+
+# Windows[reference:13]
+Thumbs.db
+[Dd]esktop.ini
+
+# 通用编辑器备份文件[reference:14]
+*~
+*.bak
+
+# 编辑器配置（例如 VSCode 的 .vscode/ 文件夹）[reference:15]
+.vscode/
+
+# ------------------------------
+# 打包和分发文件（建议忽略）
+# ------------------------------
+# 可执行文件[reference:16]
+/renpy.exe
+/renpy.sh
+/renpy.app
+
+# Android 密钥[reference:17]
+*.keystore
+
+# Steam 相关[reference:18]
+steam_appid.txt
+/steamapi.py
+
+# Live2D 模型[reference:19]
+CubismSdkForNative-*.zip
+CubismSdkForWeb-*.zip
+
+# ------------------------------
+# 如果你确定要忽略，可以取消注释（暂时不建议）
+# ------------------------------
+# 游戏截图[reference:20]
+# /screenshot*
+
+# 旧文件和临时文件目录[reference:21]
+# /0old
+# /scratch

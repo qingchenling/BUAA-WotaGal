@@ -20,7 +20,7 @@ fame                知名度（特指校园内的，所以学校爬台>练习�
 
 
 
-person_skill               个人技艺值
+person_skill         个人技艺值
 
 
 

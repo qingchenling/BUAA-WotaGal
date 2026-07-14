@@ -10,7 +10,7 @@ define l =Character("林若")
 define s = Character("宋柯")
 
 image lawn:
-    "images/lawn.png"
+    "images/bg/lawn.png"
     zoom 1.5
 # 游戏在此开始。
 

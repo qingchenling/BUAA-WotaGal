@@ -1,0 +1,1328 @@
+《光轨》游戏开发总纲文档（最终版）
+文档版本：v1.0
+适用引擎：Godot 4.x (.NET版)
+开发语言：C#
+本文档为《光轨》游戏开发的唯一权威依据，整合最终确定的全部机制、数值、剧情选项与结局条件。所有系统实现和剧情配置均应以此为依据。
+文档结构说明
+本文档将游戏从“空项目”到“完整产品”所需的一切信息按逻辑层次编排：
+游戏概览与核心循环 — 这款游戏是什么，玩家每周做什么
+数据模型与计算公式 — 所有数字从哪来、怎么算
+行动地点系统 — 地图上有哪些地方可去，各有什么收益
+固定周目剧情 — 按周顺序排列，每周触发
+判定触发剧情 — 各事件触发条件、内容与剧情文本
+结局判定系统 — 游戏如何结束，各结局触发条件
+代码架构与文件组织 — 如何用Godot/C#实现上述一切
+建议通读全文档再开始编码。
+一、游戏概览与核心循环
+1.1 游戏简介
+《光轨》是一款以“北航Wota艺社团重建”为主题的周次制文字养成游戏。玩家扮演一名大一新生，在20周内通过选择地点行动学习技能、积累知名度、触发剧情，最终影响社团走向及个人故事结局。
+2025年秋，飞梦ACG联盟元气大伤，其下属宅艺研仅剩最后一名成员林若。你在高考后的暑假通过B站第一次接触Wota艺。荧光棒在黑暗中划出光弧的姿态让你看到了梦想中大学的自己。来北航之前你就查好了宅艺研的信息，你不知道的是，等你到的时候，那个社团已经面临废社。
+1.2 每周执行流程
+选择地点 → 地点简短反馈(固定文本) → 触发固定周目剧情(若有) → 数值判定，检查是否满足判定触发剧情条件
+每周循环一次，20次循环后游戏进入结局判定。特定事件（如厄介结局）可能提前终止游戏。
+1.3 核心属性
+属性
+初始值
+含义
+技艺
+18
+面板显示值，由已解锁技能的难度和熟练度实时计算
+知名度
+0
+无上限，社团综合影响力，核心推进属性
+社团人数
+2（开局）
+随剧情变动，同时选择爬台有35%概率+1
+过激应援次数
+0
+仅回声Livehouse相关，累计2次触发厄介结局
+此外，系统需记录以下状态变量：
+北京壹号累计次数（触发网络瓶颈用）
+爬台累计次数（触发场地临时取消用）
+回声Livehouse是否解锁
+各角色线是否已进线
+非关键选项的历史选择
+1.4 角色档案
+主角（你）：北航大一新生。高考后暑假在B站第一次看到Wota艺视频，在阳台上独自练习了两个月。来北航就是为了找到打Wota艺的人。你不是天赋型选手，很多爱好也曾半途而废，但Wota社让你找到了社团活动是什么感觉。
+林若：北航大二工科生，焲痕Wota社现任社长。原飞梦ACG联盟宅艺研最后一名留守成员。对技艺有近乎偏执的追求，逐帧回放练习视频挑刺，同一段技反复打三十遍直到“光轨没有瑕疵”。她的偏执源于误解，她以为宋柯是因为她技术不够才离开的。
+宋柯：北航大三工科生。前宅艺研成员，林若的入门恩师。现于学校附近“回声Livehouse”担任兼职灯光师。早年在地偶现场的应援视频被扒出后遭受网暴，留下“我从未觉得打艺开心过”后离开。他说“至少灯光不会被人截图分析”。
+叶子：主角的幼驯染。两人从小一起长大，考进同一所大学。她十八年来一直在做“正确”的事，却从没做过一件想做的事。她不了解ACG，不知道Bメロ是什么意思，第一次看到荧光棒时问电池能用多久。她帮社团跑行政申请不是因为对Wota艺感兴趣，而是因为你在打艺时的专注神情，是她在自己身上从未见过的。
+夜凪：瘦高个男生，学院路校区学生。高中打过两年艺，原社团在高考那年解散。网名“夜凪”（やなぎ），寓意“风停在夜里”。他在B站看到焲痕社的视频后主动找来。
+灰白：研一学长，零基础。网名“灰白”，取“灰色地带+白光”之意。因看到焲痕社的光轨视频前来尝试，动作别扭但练得认真。第14周因研一课业压力退社。
+二、数据模型与计算公式
+2.1 技艺计算
+技艺 = 10 + Σ（已解锁技能的难度 × 熟练度 ÷ 10）
+初始：雷蛇（难度1，熟练度40）= 贡献4，天照（难度1，熟练度40）= 贡献4，基础10 → 技艺18
+每次熟练度变化后实时重算
+2.2 学技成功率
+成功率 = 80% + 技艺×0.3% - 技能难度×5%
+（下限30%，上限95%）
+技艺
+学难度1
+学难度3
+学难度5
+18（初始）
+≈80%
+≈70%
+≈60%
+50
+90%
+80%
+70%
+70
+95%
+86%
+76%
+失败则该技位当周空置，不影响另一技位。
+2.3 技能池与抽取
+40个技，5个难度档位。每周“咏曼剧场”从池中抽5个未解锁技，选2个学习。
+周段
+难度1
+难度2
+难度3
+难度4
+难度5
+1-6周
+60%
+30%
+10%
+0%
+0%
+7-13周
+30%
+40%
+25%
+5%
+0%
+14-20周
+15%
+25%
+35%
+15%
+10%
+2.4 熟练度规则
+天空之境：所有已解锁技熟练度+10
+特定演出成功：选定技+15
+每周衰减：难度1-3不衰减，难度4衰减2点，难度5衰减3点，最低为0
+2.5 知名度获取公式
+单技知名度 = 难度系数 × 观赏度系数 × 熟练度系数 × 衰减系数
+难度系数 = 难度×6+4
+观赏度系数 = 观赏性×3+2
+熟练度系数 = 0.5 + 熟练度÷200
+衰减系数 = 0.9^使用次数
+一次行动知名度 = 所选3个技的单技知名度之和（取整）
+2.6 知名度倍率表
+状态
+北京壹号
+爬台
+远征
+回声(常规)
+回声(过激)
+初始
+×1.0
+×1.0
+×天气
+×0.8
+×1.5
+网络瓶颈后
+×0.7（或选项B的0.85）
+×1.0
+×天气（选项A后+0.1）
+不变
+不变
+场地恢复后（第17周起）
+维持当前
+×0.8
+维持当前
+不变
+不变
+2.7 天气系统（仅远征）
+天气
+概率
+系数
+彩虹
+10%
+×1.5
+下雪
+20%
+×1.4
+晴天
+45%
+×1.2
+下雨
+15%
+×0.8
+雾霾
+5%
+×0.7
+沙尘
+5%
+×0.5
+三、行动地点系统
+3.1 沙河校区（初始解锁）
+地点
+功能
+简短反馈（每次固定）
+咏曼剧场
+抽5选2学习技能（有成功率判定）
+林若演示了一遍完整的动作。你终于学会了。
+天空之境
+所有已解锁技熟练度+10
+反复练习，你找到了正确的发力感觉。
+北京壹号
+选3技获取知名度（需已解锁技≥3）
+视频上传。你关上屏幕，胳膊还有点酸。
+3.2 学院路校区（第3周解锁）
+解锁方式：知名度≥30触发招新事件，夜凪带你看学院路场地。
+地点
+功能
+简短反馈（每次固定）
+爬台
+选3技获取知名度，可能增加社团人数
+两分钟的演出结束。台下有人在鼓掌。
+远征
+选3技获取知名度，受天气影响
+远征交流结束。今天的天气影响了演出效果。
+回声Livehouse
+需第6周选项解锁；选3技获取知名度，可选应援态度
+台上的偶像在唱歌。宋柯在控制台调试着灯光。
+3.3 回声Livehouse应援态度
+每次前往回声时，在简短反馈后选择：
+常规应援：知名度×0.8，安全
+过激应援：知名度×1.5，累计1次过激。累计2次立即触发厄介结局
+四、固定周目剧情
+以下为按周触发的固定剧情。每周执行顺序：选择地点→简短反馈→固定周目剧情（若有）→数值判定，若满足条件则触发判定触发剧情（参见第五章）。
+
+序章：入学之前
+宋柯：林若，我有话跟你说。
+林若：[停下动作，回头] 怎么了？
+宋柯：[沉默片刻，没有看她]我打算退出宅艺研了。
+林若：……什么？
+宋柯：我从没觉得打艺开心过。
+林若：你在说什么？你明明——
+宋柯：[打断] 就这样吧。[转身离开，没有回头]
+林若站在原地，画面渐暗。
+
+场景：北航校门，白天
+你：这就是禁漫大学啊。终于来了。
+画面切换：手机屏幕，B站页面，Wota艺视频暂停在一道光弧上。
+你：高三那年暑假，我在B站第一次看到Wota艺。荧光棒在黑暗里划出光的轨迹，弹幕飞过一片“神仙”。我把那个视频看了很多遍。从来没有什么事让我愿意一直做下去。吉他会半途而废，摄影会半途而废，羽毛球也会半途而废。大学先来wota社试试吧。
+画面回到校门口。
+你：来北航之前我就查好了。飞梦ACG联盟有个宅艺研，宅艺研里有一群打Wota艺的人。我提前加了B站宣传群，就等着开学去找他们。
+画面：手机屏幕，QQ群消息——“本周五晚，沙河校区西区，社团活动。”
+你：[笑] 我不是什么天赋型选手。我只是想**********。
+画面渐暗。
+[序章结束] 
+第1周·光
+简短反馈（强制前往咏曼剧场）：林若演示了一遍完整的动作。你终于学会了。
+固定周目剧情：军训深夜，沙河校区西区角落。没有音乐，林若哼着节拍，独自练习“凤凰之舞”。你站到曲终。她停下来注意到你。
+林若：想学？
+你：想。
+林若：明天开始。基础技从头练。我是林若。焲痕社的社长。
+你：焲痕社？群里的名字不是宅艺研吗？
+林若：[停顿] 换名字了。也换了不少东西。现在社团只有我一个人。你还想加吗？
+你：想。
+社团状态：仅林若一人。焲痕社前身宅艺研因疫情断代、百团禁令后仅余她一人。
+
+第2周·基础
+简短反馈：（根据玩家选择显示对应地点的固定反馈文本，见第三章。）
+固定周目剧情：日常训练。林若逐帧挑刺。
+林若：第三拍慢了半帧。再来。打到没有瑕疵为止。
+
+第3周·（第一次线上招新  知名度≥30）（括号中表示数值触发剧情的预计触发时间，下同）
+简短反馈：（根据玩家选择显示对应地点的固定反馈文本。）
+固定周目剧情：无
+
+第4周·试训与日常
+简短反馈：（根据玩家选择显示对应地点的固定反馈文本。）
+固定周目剧情：B站私信收到消息，练习时被他人注意到，都问“零基础可以来吗”。这周有两新人加入。其中一个研一学长网名“灰白”，零基础，动作别扭但练得认真。另一个大一新生来了两次后没再来。
+灰白：我是真零基础。以前连荧光棒都没摸过。但是看到你们视频的那个光弧，我就想试试。
+社团人数+2
+
+第5周·（第一次登台  技艺≥25，已解锁技≥3，夜凪已入社。）
+简短反馈：（根据玩家选择显示对应地点的固定反馈文本。）
+固定周目剧情：无
+
+第6周·初见回声
+简短反馈：（根据玩家选择显示对应地点的固定反馈文本。）
+固定周目剧情：前往学院路。在回声Livehouse偶遇宋柯。他在控制台调试灯光，用一种近乎温柔的方式照亮台上和台下。
+你：[走过去] 你好。我是焲痕社的。
+宋柯：[手上动作顿了一下] 焲痕社？林若还在打？
+你：还在。
+宋柯：[沉默片刻] 挺好的。
+你：你认识她？
+宋柯：[没有抬头] 以前的。
+你问他为什么做灯光，他说“至少灯光不会被人截图分析”。离开回声时，林若在校门口等你——她没进去，只是在外面等。
+林若：[低声] 那个人……你见到了？
+▼ 功能选项（决定回声Livehouse是否解锁）：
+选项A：“那个灯光师好像认识你。” → 解锁回声Livehouse地点（随学院路同时出现）。宋柯后续剧情开启。
+选项B：“场地不错，下次可以来排练。” → 不解锁回声，宋柯剧情关闭。下次爬台时知名度额外+15。
+
+第7周·日常
+简短反馈：（根据玩家选择显示对应地点的固定反馈文本。）
+固定周目剧情：训练。灰白开始学各种技，夜凪在旁边纠正他的手腕角度。林若对你的要求一如既往严格。
+
+第8周·（第二次爬台  第7周结束后开始的第一次爬台。）
+简短反馈：（根据玩家选择显示对应地点的固定反馈文本。）
+固定周目剧情：无
+
+第9周·学期末前奏
+简短反馈：（根据玩家选择显示对应地点的固定反馈文本。）
+固定周目剧情：期末小型演出后团建，自助烤肉。夜凪把肉烤焦了，灰白抢过来吃掉了。林若脸上露出少见的轻松。
+你：[内心] 这是焲痕社第一次真正意义上的学期收尾。四个人的烤肉。肉烤焦了，但没人嫌弃。
+重要铺垫：叶子最近开始帮你整理社团资料。她发消息问你下次演出什么时候，说是“顺便帮你排一下时间”。你没有多想。她从小就爱把日程排得整整齐齐——小学春游前她就往你书包里塞过手写的时间安排表，精确到分钟。你那时候嫌她啰嗦。现在她把那张表上的每一格都填上了焲痕社的排练时间。
+
+第10周·学期末
+简短反馈：（根据玩家选择显示对应地点的固定反馈文本。）
+固定周目剧情：学期末深夜，你收到三条信息，各自指向下学期的一个方向。
+林若的消息：下学期训练强度会加大。三校联合演出的名额我争取到了。做好准备。
+宋柯的消息（仅回声已解锁时）：老周想搞个年度企划，让焲痕社参与。灯光和光轨同步编排。你有兴趣的话下学期来一起筹备。
+叶子桌上多了一张手写的社团出勤表——你没给她看过社团的考勤表，也不知道她什么时候把每个人的训练进度都整理好了。表格旁边压着场地申请回执：下半年的场地，她已经提前跑下来了。你在回执背面看到一行小字，笔迹是你从小看到大的那种工整：“一月份要交。”
+
+第11周·学院路全面开放
+简短反馈：（根据玩家选择显示对应地点的固定反馈文本。）
+固定周目剧情：林若在训练结束后把消息转发到了群里：“三校联合演出已确认。”三校联合演出进入视野。
+第12周·三校筹备与分歧
+简短反馈：（根据玩家选择显示对应地点的固定反馈文本。）
+固定周目剧情：咏曼剧场。林若向你演示那套高难度技连——凹凸圈接高难火把，至少需要三个月排练。你试着跟了前面几个动作，到第三个环节就走形了。
+林若：宁可不上台，我也不要打不够好的东西。
+你：什么才叫够好？
+林若：[没回答] 继续。第三拍。
+夜凪后来在训练室门外站了一会儿，对你说社长这两天心情不好。他不知道原因，但你隐约猜到了。灰白没参与这段对话，他在拿手机疯狂回消息。研一课业已经在挤压他的排练时间。
+若回声已解锁：宋柯为年度企划的灯光方案画了一张灯位图，交到你手上时什么都没说。图上标满了追光时机和色温参数。
+第17周·场地恢复
+简短反馈：（根据玩家选择显示对应地点的固定反馈文本。）
+固定周目剧情：
+灰白：最近有个学术会议导师要带我去，之后连着外省的比赛，可能我到联合演出都回不来了。社团人数-1。
+
+第19周·最终冲刺
+简短反馈：（根据玩家选择显示对应地点的固定反馈文本。）
+固定周目剧情：
+若进林若线：天台的对话改变了林若。她放下了那套“不能改”的技连，焲痕社全体坐下来想动作。夜凪贡献了一段从高中带来的老编排，林若把自己的solo段放了进去“这段不改，这是我的。”跑完最后一趟时没有掌声，也没有人说话。林若收棒时说了句“这次不用重来”。
+若进宋柯线：排练室里多了一个灯光控制台的简易模拟器，宋柯在推子侧面贴了三张标签“开场”“副歌”“收束”。灯光追着光轨，第一次不是照亮台上，而是照亮台下。
+若进叶子线或未进任何线：最后几次排练在爬台。林若仍坚持原版高难度技连，没有人劝阻。夜凪在排练结束后把那根高二带到现在的化棒放在训练室架子最上层——旁边是灰白留下的一根，没有标签。
+第20周·最终演出与结局判定
+简短反馈：（根据玩家选择显示对应地点的固定反馈文本。）
+固定周目剧情：
+若进林若线：三校联合演出，焲痕社压轴。那套集体共创的技连有夜凪的高中老编排、有林若的独舞段、有你改过的结尾动作。散场后林若说“谢谢你没有陪我一起钻牛角尖”。一年后百团，新生问焲痕会不会收零基础，你们同时说“来”。
+若进宋柯线：回声年度企划，灯光从控制台出发，第一次与荧光棒同轨。宋柯站在观众席最后一排，手里握着高亮电棒为大家打call。次年社招，焲痕社多了个“灯光指导”，新生问他是不是打师——“算是吧。一个还在学的人。”
+若未进线或仅进叶子线：三校联合演出，林若用原版高难度技连完成压轴。灯光全暗，全员举起化棒，两分钟光轨绽放。进入结局判定。
+演出结束后依照第六章“结局系统”依次判定结局。
+五、判定触发剧情
+以下剧情不按固定周数触发，而是每周行动后检查对应条件，一旦满足即自动触发。若同一周满足多个条件，按以下优先级依次触发。
+设计说明：每周执行顺序为“选择地点→简短反馈→固定周目剧情(若有)→数值判定(检查判定触发剧情条件)”。固定周目剧情与判定触发剧情互不冲突。
+5.1第一次线上招新
+触发条件：知名度≥30。
+预期触发周数：第3-4周。
+剧情文本：
+你在B站上传的练习视频下出现一条评论：“北航有这个社团？我可以来看看吗？”几天后，一个瘦高的男生出现在训练场地。他网名叫“夜凪”，高中打过两年艺，原社团在高考那年解散了。
+夜凪：我在学院路校区。那边有个挺偏的场地，人少，带你们去看看。高中的时候我们就常在那种地方练。
+林若看了他一眼，没有反对。
+学院路解锁：三人搭校车前往学院路。那是一片旧活动区，角落有一块平整的空地。这是日后焲痕社爬台和远征的起点。爬台、远征地点解锁。
+休息日聚餐：三人拉面馆。夜凪说起高中时社团解散的经历——高三那年指导老师退休后没人接手，活动室被收回，他把那时候用的化棒留在了活动室桌上。
+林若：[难得主动接了一句] 这次不会再解散了。
+林若的眼神一分薄凉，两分追忆，十分坚定，这是你首次看到她这样的反应。
+社团人数+1。
+
+5.2第一次登台
+触发条件：技艺≥25，已解锁技≥3，夜凪已入社。
+预期触发周数：第4-5周。
+剧情文本：学院路小型活动暖场环节，两分钟。台下不到二十人。你和林若、夜凪首次同台，灰白在台下看。夜凪爬台时坏了一根棒，下台后把坏棒带了出来，说“第一根在这儿断的，得留着”。
+唱K聚会：演出后KTV包厢。林若点了《Butter-Fly》只唱了一段就放下麦。你跑调唱了半首被切歌，夜凪用同一个调唱完了整首。灰白全程没唱，坐在角落笑着说“听你们唱就够了”。
+社员变动：试训期结束，一人留下（灰白），另一人以“没时间”为由离开。社团人数-1。这是焲痕社第一次有人退出。
+
+5.3第二次爬台
+触发条件：第7周结束后开始的第一次爬台。
+预期触发周数：第8-9周。
+剧情文本：第二次爬台比第一次多了灰白，多了半分钟。台下有人录了视频。灰白开错棒的颜色——本应该是蓝色，他折了一根橙色。下台后林若只说了一句“下次注意”。B站弹幕零星，但有一条“这个社团在哪儿？北航吗？”
+团建：爬台后烧烤摊。灰白问了句“你打艺这么久有没有后悔过”，夜凪把化棒放在桌上说“高中那会儿有人问类似的话，后来他不知道去哪儿了。棒还在这儿”，林若那头顿了下，什么也没说。
+▼ 非关键选项（第二次爬台前，后台紧张时刻）：
+选项A：深呼吸，告诉自己“两分钟而已”。 → 本次演出知名度×1.2
+选项B：反复检查化棒和站位。 → 技艺+2
+
+5.4 网暴事件
+触发条件：知名度≥120。
+预期触发周数：第12-14周。
+剧情文本：你发的视频被B站指为厄介典型。（后根据当周行动去向决定不同反应）
+若下一周前往咏曼剧场/天空之境：林若看了一眼亮起的手机屏幕。“别看。继续练。你比他们强，但你不需要向他们证明。”她把整段副歌技又打了一遍。
+若下一周前往回声Livehouse（需回声解锁）：宋柯推了一张纸巾到你面前。“别看评论。我当年看太多了。”他调了一组灯光安静地照在你旁边。那组灯光比平时暖了半档色温。
+若下一周前往北京壹号/爬台/远征：夜凪递了一瓶水：“别看了。我们不知道那些。但你已经打过好几场了，该信自己。”灰白什么也没说，只把化棒塞回你手心。你低头发现那根棒没折过——是他自己的。
+▼ 根据前往地点（事件后）：
+前往咏曼剧场/天空之境：技艺+5，后可触发进入林若个人线的关键选项。
+前往回声Livehouse（需回声解锁）：知名度+20，后可触发进入宋柯个人线的关键选项。
+前往北京壹号/爬台/远征：发愤图强，技艺+5。
+
+5.5 网络瓶颈
+触发条件：前往北京壹号累计3次。
+预期触发周数：第8-12周。
+剧情文本：
+你发现最近几条视频的播放量增速明显放缓。不是没人看，而是增速明显降了。灰白过来看了眼数据：“B站算法……好像是同类型视频推送到一定量之后就不会再给大范围曝光了。”林若没参与讨论，但你注意到她把手机放下，望向了窗外。
+▼ 选项：
+选项A：“那就换条路——去远征。” → 远征知名度倍率永久+0.1
+选项B：“加大录制频率，用数量破瓶颈。” → 北京壹号倍率从0.7恢复到0.85
+
+5.6 场地临时取消
+触发条件：前往爬台累计2次。
+预期触发周数：第12-16周。
+剧情文本：
+黑板贴着通知：“因临时活动需征用，暂停使用两周。”叶子了解情况后。“我去找学院反应。”
+后一周行动结束简短反馈后优先触发：她这件事跑了两天，压缩了大量的课业时间。“连约了三场，最后一场才见到管分配的，把细则一条条对。”场地下周之后恢复，但恢复后知名度获取效率降为×0.8。
+
+5.7 林若进线选项
+触发条件：技艺≥45，网暴事件下一周前往咏曼剧场/天空之境。
+预期触发周数：第15周。
+剧情文本：
+林若约你到新主楼天台。夜风很大，她在打完最后一套技连后坐到了天台边。
+林若：[没有回头] 以前这里有两个人。我和宋柯。他教我怎么打OAD，怎么发力。我们不怎么说话，但有他在就觉得很安心。
+你：[坐在她旁边] 他为什么走？
+林若：[沉默很久] 我一直以为——他是因为我。那次爬台之后他就消失了。他教我的基础技，我不敢改任何一个细节。那套技连，是他离开前用的最后一套动作。我不敢改。不敢简化。[低下头] 如果改了，就好像连他留下的最后一点东西都没了。
+你：他不是因为你才走的。
+林若：你怎么知道？
+▼ 关键进线选项（仅此一次）：
+选项A：“我去找他。” → 进林若线。后续第16-20周进入林若线专属剧情（见5.8）。
+选项B：“那不是你的错。” → 不进线。社团主线继续。
+
+5.8 林若线专属剧情（第16-20周）
+进线后自动触发。
+第16-17周·寻找宋柯：
+[回声Livehouse·凌晨]
+你告诉宋柯林若这些年怎么想的。他沉默很久：“带我去见她。”
+[新主楼天台]
+林若看到宋柯，愣住了。
+宋柯：我离开不是因为你技术不行。是因为那时候我以为自己不喜欢打艺了。但其实不是。我只是不喜欢那个被网暴的自己。你打得一直都很好。从第一天教你基础技我就知道，你会超过我。我不告而别，是因为我不够勇敢。不是你不够好。
+林若：[低着头，很久] 那套技连……我不打了。
+宋柯：什么？
+林若：[抬起头，眼睛是红的，但嘴角是笑的] 你说的。我不是因为技术才值得留在这里。所以这次——我想打一套大家一起编的。不用很难，只要每个人都在。
+第18-19周·集体创作：焲痕社全员共创编排。夜凪贡献了一段从高中带来的老编排，林若把自己solo段放进去——“这段不改，这是我的。”
+
+5.9 宋柯进线选项
+触发条件：知名度≥300且回声已解锁，在网暴事件下一周前往回声Livehouse。
+预期触发周数：第16周。
+剧情文本：
+回声排练最后一天，散场后空无一人。宋柯独自站在舞台前，从口袋里摸出一对化棒，折亮，打了一个最简单的OAD。动作生涩，但打完他站在那里。
+宋柯：好像也没那么难。[停下来，看着手里逐渐暗淡的光]
+▼ 关键进线选项（仅此一次）：
+选项A：“那就再试一次。” → 进宋柯线。后续第17-20周进入宋柯线专属剧情（见5.10）。
+选项B：沉默 → 不进线。无数值补偿。宋柯继续做灯光师。
+
+5.10 宋柯线专属剧情（第17-20周）
+进线后自动触发。
+第17-19周·回响：几天后在控制台空余时间，你撞见宋柯对着镜子悄悄练习基础腕挥，动作笨拙但专注。你们开始一起练。某天收工后他说：“我以前一直以为，台下的人只需要照亮台上。现在觉得，台下的人也需要被照亮。”
+第19周：排练室里多了一对电棒与一盒化棒。
+
+5.11 叶子进线选项
+触发条件：技艺≥55，第19周。
+剧情文本：
+演出前凌晨，灯还亮着。你在为明天的最终演出紧张，用手机跟叶子聊天。叶子正在桌边整理节目单。
+叶子：你还不睡。
+你：睡不着。明天千人礼堂。人会很多。
+叶子：人多不好吗？
+你：人多会出错。出错会被人记住。
+叶子：你知道我为什么帮你们做这些吗。因为你在台上的时候，是我见过你最像你自己的时候。所以别谢我。去睡。
+▼ 关键进线选项（仅此一次）：
+选项A：“你为什么一直帮我？” → 进叶子线。触发敞开心扉对话，毕业时获得手账结局。
+选项B：“早点睡吧。” → 不进线。无补偿。
+中期事件触发机制
+事件
+触发条件
+预期触发周数
+效果
+网络瓶颈
+北京壹号累计3次
+第8-12周
+北京壹号倍率降为×0.7；选项可选转远征或恢复至0.85
+场地临时取消
+爬台累计2次
+第12-16周
+爬台暂停两周，第17周恢复后倍率降为×0.8；伴随灰白退社
+场地恢复
+场地取消后第3周自动
+第17周
+爬台重新可用但效率削弱
+六、结局系统
+6.1 结局触发优先级
+第20周结束（或被过激应援提前打断）
+│
+├── 1. 特殊结局（优先判定）
+│   ├── 厄介结局：累计2次过激应援 → 立即触发，结束游戏
+│   └── 社恐结局：三线全未进 且 知名度≥500
+│
+├── 2. 社团结局
+│   ├── 光轨（HE）：知名度≥500 且 社团人数≥5 
+│   └── 未完成的光弧（BE）：未满足HE条件
+│
+└── 3. 个人结局（仅社团HE时触发）
+    ├── 林若「光之环」：进林若线 且 技艺≥75
+    ├── 宋柯「光与影的协奏」：进宋柯线 且 知名度≥600
+    └── 叶子「不在圈内的光」：进叶子线（无额外数值条件）
+6.2 各结局内容
+厄介结局：画面被逐帧分析挂在“厄介典型”标签下。字幕：“有些事情，一旦越界，就回不去了。”
+社恐结局：毕业后当年在B站发布的视频登上各高中生首页。评论区：“能遇到wota艺真是太好了。”一个月后，B站私信提示音响起，一个陌生ID发来消息：“看了你第一年的那条视频开始学的。那个动作我练了两年。谢谢。”附件是一段短视频：一块普通的阳台，一个新人在生涩地打着基础技，划出的光弧和你那年一模一样。你关掉手机，把箱子最底层那根电棒翻了出来。字幕：“光棒没有熄灭。它只是换了一只手。”
+社团HE·光轨：焲痕社正式注册为独立社团，获五星评定。一年后百团招新，线上发布的光轨视频下有人问“北航焲痕社还招新吗？”帖子底下，林若、宋柯、叶子逐一回复“来”。
+社团BE·未完成的光弧：毕业时你收拾宿舍，从箱子底层翻出第一次爬台用的化棒。它已经开过了，但你仍然将其放进了行李箱。
+林若「光之环」：天台上她对你说“这次不需要重来”。三校演出后站在空舞台边跟你说“谢谢你没有陪我一起钻牛角尖”。一年后百团，新生问焲痕会不会收零基础，你们同时说“来”。
+宋柯「光与影的协奏」：灯光第一次和荧光棒同轨，照亮的是台下。次年社团招新，焲痕社多了个“灯光指导”。新生问他是不是打师——“算是吧。一个还在学的人。”
+叶子「不在圈内的光」：她递给你一本手写手账。里面记录的不是她自己，是“今天排练到凌晨”“明天说还想继续”“第一次爬台坏了一根棒”。扉页写着一句话：你继续打，我继续记。
+6.3 结局播放优先级（同时满足多条个人线、特殊结局、社团结局时）
+林若 > 宋柯 > 叶子＞社团结局＞社恐结局
+七、代码架构
+7.1 架构总览
+《光轨》采用 “状态-事件-视图”三层架构，核心思想是逻辑与表现分离，事件驱动数据流。通过Godot的Autoload功能实现四个全局单例，各司其职：
+单例
+角色
+职责
+DataStore
+状态中心
+唯一的数据源（Single Source of Truth）。所有游戏运行时状态集中于此，数据变更时发出Signal
+GameManager
+流程调度
+控制周次循环、剧情触发判定、结局检测。持有DataStore引用，读取状态并执行游戏规则
+UIManager
+表现层
+负责所有界面显示。监听DataStore信号，接收GameManager调用
+EventManager
+事件总线
+全局事件调度中心。允许各模块通过事件名通信而不直接互相依赖
+引入EventManager的原因：之前的架构中GameManager直接调用UIManager，导致游戏逻辑模块需要知道UI模块的接口细节，耦合度高。引入EventManager后，GameManager只发布事件，UIManager订阅事件自行响应，两者不再直接依赖。
+层级规则：
+DataStore 完全独立，不持有任何模块引用，仅发出Signal
+GameManager 持有DataStore引用（读写状态），需要触发UI时通过EventManager发布事件
+UIManager 监听DataStore的Signal和EventManager的事件，自行决定如何响应
+EventManager 独立于所有模块，仅作为事件通道存在
+7.2 Autoload配置
+在Godot项目设置（项目→项目设置→自动加载）中按以下顺序添加：
+text
+1. EventManager    # 事件总线，最先加载（其他模块订阅事件时需要它已存在）
+2. DataStore       # 数据层
+3. UIManager       # UI层，订阅DataStore信号
+4. GameManager     # 逻辑层，持有DataStore引用
+C#中通过 GetNode<T>("/root/单例名") 获取Autoload节点的强类型引用。
+7.3 核心模块设计
+7.3.1 EventManager —— 全局事件总线
+Godot社区推荐的最佳解耦方案。当游戏中有数十个模块需要互相通信时，一个集中的事件总线比让每个节点互相持有引用更清晰、更易维护。
+csharp
+// EventManager.cs —— 全局事件总线（Autoload单例）
+// 设计说明：采用静态泛型方式，避免Godot Signal的字符串依赖和类型转换问题。
+// 参考Godot社区最佳实践，使用C#原生泛型事件实现类型安全的事件总线。
+public partial class EventManager : Node
+{
+    // 存储所有事件订阅：事件类型 → 回调函数列表
+    // 泛型设计确保每个事件类型都有独立的订阅者列表
+    private static readonly Dictionary<Type, List<Delegate>> _subscribers = new();
+
+    // 订阅事件：T为事件数据类型（如DialogueShowEvent、WeekAdvanceEvent等）
+    public static void Subscribe<T>(Action<T> callback)
+    {
+        Type type = typeof(T);
+        if (!_subscribers.TryGetValue(type, out var list))
+        {
+            list = new List<Delegate>();
+            _subscribers[type] = list;
+        }
+        list.Add(callback);
+    }
+
+    // 发布事件：携带类型安全的事件数据
+    public static void Publish<T>(T evt)
+    {
+        Type type = typeof(T);
+        if (!_subscribers.TryGetValue(type, out var list)) return;
+        // ToArray()防止在遍历过程中修改列表导致异常
+        foreach (var cb in list.ToArray())
+        {
+            (cb as Action<T>)?.Invoke(evt);
+        }
+    }
+
+    // 取消订阅：节点释放时必须调用，防止内存泄漏
+    public static void Unsubscribe<T>(Action<T> callback)
+    {
+        Type type = typeof(T);
+        if (_subscribers.TryGetValue(type, out var list))
+        {
+            list.Remove(callback);
+        }
+    }
+}
+为什么用静态泛型类而非Godot Signal？
+类型安全：Publish<DialogueShowEvent>(evt) 在编译时即可检查类型，避免Godot Signal传入错误的参数类型导致运行时崩溃
+性能：静态泛型调用避免了Godot Signal的字符串查找和Variant装箱/拆箱开销
+解耦更彻底：发送方和接收方都不需要继承Node或挂在场景树中，纯C#类也能参与事件通信
+代码提示友好：IDE可以对泛型事件提供完整的自动补全
+【备选方案】Godot Autoload Signal实现如果偏好使用Godot原生的Signal系统（例如需要与GDScript交互），也可以使用Autoload Signal方式：
+csharp
+// EventBus.cs —— Godot原生Signal版本（备选）
+// 优点：与GDScript兼容，可在编辑器中直接查看信号连接
+// 缺点：参数类型检查不如泛型严格，字符串依赖，需要继承Node
+public partial class EventBus : Node
+{
+    [Signal] public delegate void DialogueShowEventHandler(string speaker, string text, string background);
+    [Signal] public delegate void WeekAdvanceEventHandler(int newWeek);
+    [Signal] public delegate void FameChangedEventHandler(int newValue);
+    // ... 其他信号
+}
+
+// 发送方
+GetNode<EventBus>("/root/EventBus").EmitSignal(EventBus.SignalName.DialogueShow, "林若", "想学？", "bg_night");
+
+// 接收方
+GetNode<EventBus>("/root/EventBus").DialogueShow += OnDialogueShow;
+两种方案对比：
+特性
+静态泛型EventBus
+Godot Autoload Signal
+类型安全
+编译时检查，强类型
+运行时检查，参数类型可能不匹配
+性能
+直接C#调用，无装箱
+有Variant装箱/拆箱开销
+与GDScript互操作
+不支持
+支持
+编辑器可视化
+不支持
+支持（可在编辑器查看连接）
+代码量
+需要手动管理订阅/取消订阅
+信号连接由Godot自动管理
+适用场景
+纯C#项目，追求类型安全和性能
+混合GDScript/C#项目
+建议：《光轨》为纯C#项目，推荐使用静态泛型EventBus方案。
+7.3.2 DataStore —— 唯一数据源
+csharp
+// DataStore.cs —— 全局数据存储（Autoload单例）
+// 设计原则：所有游戏状态集中于此，外部不能直接修改字段，只能通过方法操作
+public partial class DataStore : Node
+{
+    // ===== 核心属性 =====
+    private int _yiJi; // 技艺（面板值）
+    public int YiJi
+    {
+        get => _yiJi;
+        private set { _yiJi = value; } // 技艺不对外直接设置，由RecalculateYiJi计算
+    }
+
+    private int _fame; // 知名度（无上限）
+    public int Fame
+    {
+        get => _fame;
+        set
+        {
+            _fame = value;
+            EventManager.Publish(new FameChangedEvent(_fame));
+        }
+    }
+
+    private int _memberCount = 2; // 社团人数（初始2人：主角+林若）
+    public int MemberCount
+    {
+        get => _memberCount;
+        set
+        {
+            _memberCount = value;
+            EventManager.Publish(new MemberCountChangedEvent(_memberCount));
+        }
+    }
+
+    // ===== 技能数据 =====
+    public List<SkillData> UnlockedSkills = new(); // 已解锁技能列表
+    // SkillData包含：Name(string), Difficulty(int), Visual(int), Proficiency(int), UseCount(int)
+
+    // ===== 游戏状态变量 =====
+    public int CurrentWeek = 1;           // 当前周数（1-20）
+    public bool IsXueyuanLuUnlocked;      // 学院路是否解锁
+    public bool IsEchoUnlocked;           // 回声Livehouse是否解锁
+    public int BeijingOneCount;           // 北京壹号累计次数
+    public int StageCount;                // 爬台累计次数
+    public int AggressiveCount;           // 过激应援次数（达2次触发厄介结局）
+
+    // ===== 进线状态 =====
+    public bool IsLinRuoRoute;
+    public bool IsSongKeRoute;
+    public bool IsYeziRoute;
+
+    // ===== 事件判定状态 =====
+    public bool HasRecruited;             // 是否已触发第一次线上招新
+    public bool HasFirstStage;            // 是否已触发第一次登台
+    public bool HasSecondStage;           // 是否已触发第二次爬台
+    public bool HasCyberbully;            // 是否已触发家虎哥事件
+    public bool HasBottleneck;            // 是否已触发网络瓶颈
+    public bool HasVenueCancel;           // 是否已触发场地临时取消
+    public int VenueCancelWeek;           // 场地取消发生的周数（用于计算第3周恢复）
+
+    // ===== 非关键选项历史 =====
+    public Dictionary<string, int> OptionHistory = new();
+
+    // ===== 核心方法 =====
+
+    // 添加新技能
+    public void AddSkill(SkillData skill)
+    {
+        skill.Proficiency = 30; // 新学技能初始熟练度30
+        UnlockedSkills.Add(skill);
+        RecalculateYiJi();
+        EventManager.Publish(new SkillChangedEvent());
+    }
+
+    // 练习所有技能（天空之境）
+    public void PracticeAllSkills()
+    {
+        foreach (var skill in UnlockedSkills)
+        {
+            skill.Proficiency = Math.Min(100, skill.Proficiency + 10);
+        }
+        RecalculateYiJi();
+        EventManager.Publish(new SkillChangedEvent());
+    }
+
+    // 单个技能额外练习（新主楼天台）
+    public void PracticeSkill(string skillName, int bonus)
+    {
+        var skill = UnlockedSkills.Find(s => s.Name == skillName);
+        if (skill != null)
+        {
+            skill.Proficiency = Math.Min(100, skill.Proficiency + bonus);
+            RecalculateYiJi();
+            EventManager.Publish(new SkillChangedEvent());
+        }
+    }
+
+    // 知名度计算公式
+    public static int CalculateFame(int difficulty, int visual, int proficiency, int useCount)
+    {
+        double diffCoeff = difficulty * 6 + 4;
+        double visualCoeff = visual * 3 + 2;
+        double profCoeff = 0.5 + proficiency / 200.0;
+        double decay = Math.Pow(0.9, useCount);
+        return (int)(diffCoeff * visualCoeff * profCoeff * decay);
+    }
+
+    // 重算技艺面板值
+    private void RecalculateYiJi()
+    {
+        int total = 10; // 基础值
+        foreach (var skill in UnlockedSkills)
+        {
+            total += skill.Difficulty * skill.Proficiency / 10;
+        }
+        YiJi = total;
+    }
+
+    // 每周熟练度衰减（仅难度4-5）
+    public void ApplyWeeklyDecay()
+    {
+        foreach (var skill in UnlockedSkills)
+        {
+            if (skill.Difficulty >= 4)
+            {
+                int decay = skill.Difficulty == 4 ? 2 : 3;
+                skill.Proficiency = Math.Max(0, skill.Proficiency - decay);
+            }
+        }
+        RecalculateYiJi();
+    }
+
+    // 重置为新游戏状态
+    public void ResetToNewGame()
+    {
+        // 重置所有状态变量到初始值
+        // ...
+    }
+}
+7.3.3 GameManager —— 流程调度
+csharp
+// GameManager.cs —— 游戏流程控制（Autoload单例）
+public partial class GameManager : Node
+{
+    private DataStore _data;
+
+    public override void _Ready()
+    {
+        _data = GetNode<DataStore>("/root/DataStore");
+    }
+
+    // 开始新游戏
+    public void StartNewGame()
+    {
+        _data.ResetToNewGame();
+        // 初始化初始技能（雷蛇、天照）
+        // 通过EventManager发布事件，触发序章剧情播放
+        EventManager.Publish(new DialogueShowEvent("system", "序章", "bg_black"));
+        // 序章结束后进入第1周
+    }
+
+    // 玩家选择地点后的处理
+    public void OnPlayerAction(string locationId)
+    {
+        switch (locationId)
+        {
+            case "yongman_theater": // 咏曼剧场
+                // 抽5选2学技逻辑
+                _data.BeijingOneCount = 0; // 不影响北京壹号计数
+                break;
+            case "sky_mirror": // 天空之境
+                _data.PracticeAllSkills();
+                EventManager.Publish(new ActionResultEvent("反复练习，你找到了正确的发力感觉。"));
+                break;
+            case "beijing_one": // 北京壹号
+                _data.BeijingOneCount++;
+                // 知名度获取逻辑
+                break;
+            case "stage": // 爬台
+                _data.StageCount++;
+                // 知名度获取逻辑 + 35%概率社团人数+1
+                break;
+            // ... 其他地点
+        }
+
+        // 行动后检查判定触发剧情
+        CallDeferred(nameof(CheckConditionalEvents));
+    }
+
+    // 推进周数
+    public void AdvanceWeek()
+    {
+        _data.ApplyWeeklyDecay(); // 先衰减
+        _data.CurrentWeek++;
+        EventManager.Publish(new WeekAdvanceEvent(_data.CurrentWeek));
+
+        if (_data.CurrentWeek > 20)
+        {
+            CheckEnding();
+            return;
+        }
+
+        // 触发本周固定剧情（若有）
+        TriggerFixedStory(_data.CurrentWeek);
+    }
+
+    // 检查所有判定触发剧情
+    private void CheckConditionalEvents()
+    {
+        // 按优先级检查（数字越小优先级越高）：
+
+        // 【优先级1】第一次线上招新
+        if (!_data.HasRecruited && _data.Fame >= 30)
+        {
+            _data.HasRecruited = true;
+            TriggerEvent("recruit");
+            return;
+        }
+
+        // 【优先级2】第一次登台
+        if (!_data.HasFirstStage && _data.YiJi >= 25
+            && _data.UnlockedSkills.Count >= 3 && _data.HasRecruited)
+        {
+            _data.HasFirstStage = true;
+            TriggerEvent("first_stage");
+            return;
+        }
+
+        // 【优先级3】第二次爬台（第7周后的第一次爬台）
+        if (!_data.HasSecondStage && _data.CurrentWeek >= 7
+            && /* 当周行动为爬台 */)
+        {
+            _data.HasSecondStage = true;
+            TriggerEvent("second_stage");
+            return;
+        }
+
+        // 【优先级4】家虎哥事件
+        if (!_data.HasCyberbully && _data.Fame >= 120)
+        {
+            _data.HasCyberbully = true;
+            TriggerEvent("cyberbully");
+            return;
+        }
+
+        // 【优先级5】网络瓶颈
+        if (!_data.HasBottleneck && _data.BeijingOneCount >= 3)
+        {
+            _data.HasBottleneck = true;
+            TriggerEvent("bottleneck");
+            return;
+        }
+
+        // 【优先级6】场地临时取消
+        if (!_data.HasVenueCancel && _data.StageCount >= 2)
+        {
+            _data.HasVenueCancel = true;
+            _data.VenueCancelWeek = _data.CurrentWeek;
+            TriggerEvent("venue_cancel");
+            return;
+        }
+
+        // 【优先级7】林若进线（网暴事件后前往咏曼/天空之境）
+        if (!_data.IsLinRuoRoute && _data.HasCyberbully
+            && _data.YiJi >= 45 /* && 当周前往咏曼或天空之境 */)
+        {
+            TriggerEvent("linruo_route_entry");
+            return;
+        }
+
+        // 【优先级8】宋柯进线（网暴后前往回声 + 知名度≥300）
+        if (!_data.IsSongKeRoute && _data.HasCyberbully
+            && _data.IsEchoUnlocked && _data.Fame >= 300
+            /* && 当周前往回声 */)
+        {
+            TriggerEvent("songke_route_entry");
+            return;
+        }
+
+        // 【优先级9】叶子进线（第19周 + 技艺≥55）
+        if (!_data.IsYeziRoute && _data.CurrentWeek >= 19 && _data.YiJi >= 55)
+        {
+            TriggerEvent("yezi_route_entry");
+            return;
+        }
+    }
+
+    // 触发指定事件（通过Dialogue Manager播放对应.dialogue文件）
+    private void TriggerEvent(string eventId)
+    {
+        EventManager.Publish(new DialogueShowEvent("system", eventId, ""));
+    }
+
+    // 触发固定周目剧情
+    private void TriggerFixedStory(int week)
+    {
+        // 根据week和当前进线状态，播放对应的.dialogue文件
+        string storyId = $"week{week}";
+        if (_data.IsLinRuoRoute && week >= 16) storyId += "_linruo";
+        else if (_data.IsSongKeRoute && week >= 17) storyId += "_songke";
+        EventManager.Publish(new DialogueShowEvent("system", storyId, ""));
+    }
+
+    // 结局判定
+    public void CheckEnding()
+    {
+        // 1. 厄介结局（过激应援≥2）
+        if (_data.AggressiveCount >= 2)
+        {
+            EventManager.Publish(new EndingTriggerEvent("akugeki"));
+            return;
+        }
+
+        // 2. 社恐结局（三线未进 且 知名度≥500）
+        if (!_data.IsLinRuoRoute && !_data.IsSongKeRoute && !_data.IsYeziRoute
+            && _data.Fame >= 500)
+        {
+            EventManager.Publish(new EndingTriggerEvent("shakou"));
+            return;
+        }
+
+        // 3. 社团HE（知名度≥500 且 社团人数≥5）
+        bool isClubHE = _data.Fame >= 500 && _data.MemberCount >= 5;
+
+        // 4. 在社团HE基础上判定个人结局
+        if (isClubHE)
+        {
+            if (_data.IsLinRuoRoute && _data.YiJi >= 75)
+                EventManager.Publish(new EndingTriggerEvent("linruo_light_ring"));
+            else if (_data.IsSongKeRoute && _data.Fame >= 600)
+                EventManager.Publish(new EndingTriggerEvent("songke_light_shadow"));
+            else if (_data.IsYeziRoute)
+                EventManager.Publish(new EndingTriggerEvent("yezi_outside_light"));
+            else
+                EventManager.Publish(new EndingTriggerEvent("club_he"));
+        }
+        else
+        {
+            EventManager.Publish(new EndingTriggerEvent("club_be"));
+        }
+    }
+}
+7.3.4 UIManager —— 表现层
+csharp
+// UIManager.cs —— UI管理（Autoload单例）
+public partial class UIManager : Node
+{
+    public override void _Ready()
+    {
+        // 订阅EventManager的事件
+        EventManager.Subscribe<DialogueShowEvent>(OnDialogueShow);
+        EventManager.Subscribe<ActionResultEvent>(OnActionResult);
+        EventManager.Subscribe<WeekAdvanceEvent>(OnWeekAdvance);
+        EventManager.Subscribe<FameChangedEvent>(OnFameChanged);
+        EventManager.Subscribe<EndingTriggerEvent>(OnEndingTrigger);
+    }
+
+    public override void _ExitTree()
+    {
+        // 重要：退出时取消所有订阅，防止内存泄漏
+        EventManager.Unsubscribe<DialogueShowEvent>(OnDialogueShow);
+        EventManager.Unsubscribe<ActionResultEvent>(OnActionResult);
+        EventManager.Unsubscribe<WeekAdvanceEvent>(OnWeekAdvance);
+        EventManager.Unsubscribe<FameChangedEvent>(OnFameChanged);
+        EventManager.Unsubscribe<EndingTriggerEvent>(OnEndingTrigger);
+    }
+
+    private void OnDialogueShow(DialogueShowEvent evt)
+    {
+        // 调用Dialogue Manager显示对应.dialogue文件
+        // 具体实现见7.4节
+    }
+
+    private void OnActionResult(ActionResultEvent evt)
+    {
+        // 显示行动简短反馈文本（固定文本，见各地点）
+    }
+
+    private void OnWeekAdvance(WeekAdvanceEvent evt)
+    {
+        // 更新左上角周数显示
+    }
+
+    private void OnFameChanged(FameChangedEvent evt)
+    {
+        // 更新知名度显示（动画过渡）
+    }
+
+    private void OnEndingTrigger(EndingTriggerEvent evt)
+    {
+        // 播放结局演出
+    }
+
+    // 切换到主地图界面
+    public void ShowMainMap()
+    {
+        // 切换场景到main_map.tscn
+        // 根据DataStore状态动态显示/隐藏回声Livehouse图标
+        // 根据DataStore状态动态显示/隐藏学院路校区（第3周解锁）
+    }
+
+    // 更新属性面板显示
+    public void UpdateStatDisplay()
+    {
+        // 读取DataStore.YiJi、DataStore.Fame、DataStore.CurrentWeek
+        // 更新对应UI元素
+    }
+}
+7.3.5 事件数据类定义
+csharp
+// Events.cs —— 所有事件类型定义（纯数据类，不继承Node）
+// 这类轻量级事件结构体称为"事件数据类"（Event Data Class），
+// 仅用于承载数据，由EventManager负责路由分发
+
+public class DialogueShowEvent
+{
+    public string Speaker { get; set; }
+    public string DialogueId { get; set; }
+    public string Background { get; set; }
+
+    public DialogueShowEvent(string speaker, string dialogueId, string background)
+    {
+        Speaker = speaker;
+        DialogueId = dialogueId;
+        Background = background;
+    }
+}
+
+public class ActionResultEvent
+{
+    public string Message { get; set; }
+    public ActionResultEvent(string message) => Message = message;
+}
+
+public class WeekAdvanceEvent
+{
+    public int NewWeek { get; set; }
+    public WeekAdvanceEvent(int newWeek) => NewWeek = newWeek;
+}
+
+public class FameChangedEvent
+{
+    public int NewValue { get; set; }
+    public FameChangedEvent(int newValue) => NewValue = newValue;
+}
+
+public class MemberCountChangedEvent
+{
+    public int NewValue { get; set; }
+    public MemberCountChangedEvent(int newValue) => NewValue = newValue;
+}
+
+public class SkillChangedEvent { }
+
+public class EndingTriggerEvent
+{
+    public string EndingId { get; set; }
+    public EndingTriggerEvent(string endingId) => EndingId = endingId;
+}
+7.4 数据流示意
+以下以“玩家在天空之境练习”为例，展示数据如何在整个架构中流动：
+text
+1. 玩家点击“天空之境”按钮
+   ↓
+2. Button.pressed 信号 → GameManager.OnPlayerAction("sky_mirror")
+   ↓
+3. GameManager → DataStore.PracticeAllSkills()
+   ├── 所有技能熟练度+10
+   ├── RecalculateYiJi() 重算技艺面板值
+   └── DataStore发出 SkillChangedEvent
+   ↓
+4. GameManager → EventManager.Publish(new ActionResultEvent("反复练习，你找到了正确的发力感觉。"))
+   ↓
+5. UIManager.OnActionResult() 收到事件 → 显示反馈文本
+   UIManager.OnSkillChanged() 收到Signal → 刷新属性面板
+   ↓
+6. GameManager.CallDeferred(nameof(CheckConditionalEvents))
+   └── 检查是否有判定触发剧情需要触发（如技艺达到25触发第一次登台）
+关键设计点：
+CallDeferred的使用：CheckConditionalEvents 使用 CallDeferred 延迟到下一帧调用。这是因为当前帧中DataStore的状态更新可能尚未完全传播到所有监听者，延迟调用可以确保所有Signal已被处理完毕后再进行条件判定，避免时序问题。
+事件与Signal的配合：DataStore使用Godot原生Signal发出状态变化通知（与Godot编辑器集成好），GameManager与UIManager之间使用静态EventBus通信（更解耦）。两者各司其职。
+7.5 可复用框架与插件说明
+本节详细说明《光轨》开发中推荐使用的第三方框架和插件，包括各自的功能定位、引入原因、安装方式和核心用法。
+7.5.1 Dialogue Manager —— 对话系统（强烈推荐）
+Asset Library 地址：https://godotengine.org/asset-library/asset/3654
+GitHub 仓库：https://github.com/nathanhoad/godot_dialogue_manager
+C# 集成文档：https://deepwiki.com/foxmooner2021/godot_dialogue_manager/7-c-integration
+Dialogue Manager 是 Godot Asset Library 中最流行、维护最活跃的对话插件，同时原生支持GDScript和C#。
+为什么推荐它？
+文本驱动：在编辑器中直接写对话，支持分支、条件跳转、变量赋值、信号发射
+语法简洁：像写剧本一样写游戏对话，检查即时生效，有语法错误马上提示
+C#友好：提供完整的C# Wrapper，所有API都是类型安全的
+状态管理：对话中可以直接读写 Godot 节点或 Autoload 的导出变量，与 DataStore 天然兼容
+安装步骤：
+在 Godot Asset Library 中搜索 "Dialogue Manager"，下载并安装
+在项目设置 → Plugins 中启用 Dialogue Manager
+在C#脚本中添加命名空间：using DialogueManagerRuntime;
+核心用法示例：
+csharp
+// 在UIManager中播放对话
+private void OnDialogueShow(DialogueShowEvent evt)
+{
+    // 加载.dialogue资源文件
+    var dialogue = GD.Load<Resource>($"res://data/plot/{evt.DialogueId}.dialogue");
+
+    // 使用DialogueManager静态类播放对话
+    // DialogueManager会自动处理文本播放、选项分支、信号回调
+    DialogueManager.ShowDialogueBalloon(dialogue, evt.DialogueId);
+}
+一个 .dialogue 文件示例（序章）：
+text
+# data/plot/chapter0_prologue.dialogue
+# 格式：角色名: 对话内容
+# 支持条件判断、变量赋值、信号发射
+
+# 场景：宅艺研训练室，傍晚
+林若: [停下动作，回头] 怎么了？
+宋柯: [沉默片刻，没有看她] 我打算退出宅艺研了。
+林若: ……什么？
+宋柯: 我从没觉得打艺开心过。
+林若: 你在说什么？你明明——
+宋柯: [打断] 就这样吧。
+# 条件跳转：切换到北航校门场景
+# 主角独白
+Nathan: 这就是禁漫大学啊。终于来了。
+Nathan: 高三那年暑假，我在B站第一次看到Wota艺...
+# 剧情结束，通过信号通知GameManager
+=> signal: prologue_finished
+7.5.2 EasySave —— 存档管理
+Asset Library 地址：https://godotengine.org/asset-library/asset/4841
+EasySave 是专为 Godot 4.x C# 设计的轻量级存档插件，零依赖，基于Godot原生Resource序列化机制。
+为什么推荐它？
+零依赖：不依赖任何第三方库，纯Godot原生API实现
+多槽管理：支持多存档槽的保存/读取/删除
+类型安全：提供泛型API，编译时即可检查类型错误
+跨场景传递：存档数据可以在不同场景间安全传递
+信号通知：保存/加载完成时发出通知，UI可以响应
+安装步骤：
+在 Godot Asset Library 中搜索 "EasySave"，下载并安装
+在项目设置 → Plugins 中启用 EasySave
+在C#脚本中添加：using EasySave;
+在DataStore中集成存档功能：
+csharp
+// DataStore中定义存档数据结构
+[GlobalClass]
+public partial class SaveData : Resource
+{
+    [Export] public int YiJi;
+    [Export] public int Fame;
+    [Export] public int MemberCount;
+    [Export] public int CurrentWeek;
+    [Export] public Godot.Collections.Array<SkillSaveData> UnlockedSkills;
+    // ... 其他需要保存的字段
+}
+
+// 序列化当前状态为SaveData
+public SaveData ToSaveData()
+{
+    var data = new SaveData();
+    data.YiJi = this.YiJi;
+    data.Fame = this.Fame;
+    // ... 复制所有字段
+    return data;
+}
+
+// 从SaveData恢复状态
+public void FromSaveData(SaveData data)
+{
+    this.YiJi = data.YiJi;
+    this.Fame = data.Fame;
+    // ... 恢复所有字段
+    RecalculateYiJi();
+}
+备选方案：Godot原生Resource序列化
+如果不想引入额外插件，Godot自带的Resource系统也完全可以实现存档功能。创建一个继承自Resource的SaveData类，使用ResourceSaver.Save()和ResourceLoader.Load<T>()读写.tres或.res文件即可。
+csharp
+// 存档路径（user:// 指向系统用户数据目录，打包后仍然可用）
+private string SavePath = "user://save.tres";
+
+// 保存
+public void SaveGame()
+{
+    var saveData = ToSaveData();
+    ResourceSaver.Save(saveData, SavePath);
+}
+
+// 加载
+public bool LoadGame()
+{
+    if (!FileAccess.FileExists(SavePath)) return false;
+    var saveData = ResourceLoader.Load<SaveData>(SavePath);
+    if (saveData == null) return false;
+    FromSaveData(saveData);
+    return true;
+}
+两种方案对比：
+特性
+EasySave
+原生Resource序列化
+多槽管理
+内置（指定槽位ID即可）
+需自行管理文件命名
+泛型API
+支持
+需自行封装
+信号通知
+内置（保存/加载完成通知）
+需自行实现
+依赖
+一个轻量插件
+零依赖
+学习成本
+低（API简洁）
+低（Godot基础功能）
+建议：如果希望快速实现多槽存档且不想处理文件管理细节，使用EasySave；如果追求零依赖，使用原生Resource序列化也完全可以胜任。
+7.5.3 其他可选框架
+框架
+用途
+推荐度
+说明
+Dialogic
+对话系统（备选）
+备选
+功能更全面的对话/视觉小说框架，支持可视化编辑分支树，但学习曲线较陡，更适合复杂的视觉小说项目
+GodotInk
+叙事脚本
+备选
+集成Ink叙事引擎，适合有Ink使用经验的开发者，支持复杂的叙事分支和变量系统
+Godot-Mono-CustomResourceRegistry
+C# Resource支持
+可选
+修复Godot编辑器中C#自定义Resource不显示在创建菜单中的问题，开发阶段有用
+不推荐引入的依赖（对《光轨》而言过重）：
+SQLite/godot-sqlite：20周数据量极小，原生序列化完全够用
+Newtonsoft.Json：Godot 4.x 内置 System.Text.Json 已足够
+ECS框架（fennecs等）：实体数量极少，传统场景-节点架构完全够用
+7.6 项目文件结构
+text
+《光轨》/
+├── assets/
+│   ├── fonts/                        # 字体文件
+│   ├── images/
+│   │   ├── backgrounds/              # 场景背景图
+│   │   ├── characters/               # 角色立绘
+│   │   └── ui/                       # UI图标、素材
+│   └── audio/
+│       ├── bgm/                      # 背景音乐
+│       └── sfx/                      # 音效
+├── scenes/
+│   ├── main_menu.tscn                # 主菜单场景
+│   ├── main_map.tscn                 # 主地图场景（沙河+学院路）
+│   └── dialogue_box.tscn             # 对话框场景
+├── scripts/
+│   ├── autoload/
+│   │   ├── EventManager.cs           # 全局事件总线
+│   │   ├── DataStore.cs              # 数据存储管理
+│   │   ├── UIManager.cs              # UI管理
+│   │   └── GameManager.cs            # 游戏流程控制
+│   ├── data/
+│   │   ├── Events.cs                 # 事件数据类定义
+│   │   ├── SkillData.cs              # 技能数据结构（Resource类）
+│   │   └── SaveData.cs               # 存档数据结构
+│   └── ui/
+│       ├── MapButton.cs              # 地图地点按钮组件
+│       └── StatDisplay.cs            # 属性显示组件
+├── data/
+│   ├── plot/                         # Dialogue Manager的.dialogue文件
+│   │   ├── chapter0_prologue.dialogue     # 序章
+│   │   ├── chapter1_week1_5.dialogue      # 第1-5周固定剧情
+│   │   ├── chapter2_week6_10.dialogue     # 第6-10周固定剧情
+│   │   ├── chapter3_week11_20.dialogue    # 第11-20周固定剧情
+│   │   └── events/                        # 判定触发剧情
+│   │       ├── event_recruit.dialogue          # 第一次线上招新
+│   │       ├── event_first_stage.dialogue      # 第一次登台
+│   │       ├── event_second_stage.dialogue     # 第二次爬台
+│   │       ├── event_cyberbully.dialogue       # 家虎哥事件
+│   │       ├── event_bottleneck.dialogue       # 网络瓶颈
+│   │       ├── event_venue_cancel.dialogue     # 场地临时取消
+│   │       ├── route_linruo_entry.dialogue     # 林若进线选项
+│   │       ├── route_linruo_story.dialogue     # 林若线专属剧情
+│   │       ├── route_songke_entry.dialogue     # 宋柯进线选项
+│   │       ├── route_songke_story.dialogue     # 宋柯线专属剧情
+│   │       └── route_yezi_entry.dialogue       # 叶子进线选项
+│   └── skills.tres                   # 40个技能的Resource数据文件
+├── addons/
+│   ├── dialogue_manager/             # Dialogue Manager插件
+│   └── easysave/                     # EasySave插件（可选）
+└── project.godot
+7.7 推荐开发顺序
+基于以上架构，推荐按以下顺序进行开发：
+搭建Autoload四件套：先写EventManager和DataStore（纯数据、无UI依赖），再写UIManager和GameManager的骨架（_Ready中获取引用和订阅事件）。这一阶段所有模块可单独编译测试。
+接入Dialogue Manager：在Asset Library中搜索“Dialogue Manager”安装；按插件文档完成初始化；把序章剧情写成一个.dialogue文件；跑通“启动→序章→进入地图”的整条流程。
+搭建主地图场景：放置地点图标按钮；连接信号到GameManager的OnPlayerAction方法；实现简单反馈文本显示。
+实现周次循环：编写AdvanceWeek()方法；串联“行动反馈→固定剧情→判定触发→衰减→下一周”的完整流程；先用第1周的简单剧情验证循环。
+接入EasySave（或使用原生Resource序列化）：实现ToSaveData()和FromSaveData()方法；加入主菜单的“读取存档”按钮逻辑。
+开发核心数值系统：技能池随机抽取、学技成功率、知名度计算公式、熟练度衰减规则——全部在DataStore中以纯计算方法实现。
+填充全部剧情：逐个编写每段剧情的.dialogue文件；利用Dialogue Manager的条件跳转实现数值门槛判定。
+实现结局判定：CheckEnding()方法按优先级依次检查条件；UIManager通过EventManager订阅EndingTriggerEvent，收到事件后播放对应结局演出。
+7.8 代码规范
+所有C#代码遵循以下命名约定：
+csharp
+// 类名、方法名：PascalCase
+public class DataStore : Node { }
+public void AddSkill(string skillName) { }
+
+// 局部变量、方法参数：camelCase
+int currentWeek = 1;
+public void ShowDialogue(string speakerName, string dialogueText) { }
+
+// 私有字段：_camelCase
+private int _clubFame;
+
+// 公共属性：PascalCase
+public int ClubFame { get; set; }
+
+// Signal委托：On + PascalCase + EventHandler
+[Signal] public delegate void OnFameChangedEventHandler(int newValue);
+
+// 事件数据类：名词 + Event
+public class DialogueShowEvent { }
+public class WeekAdvanceEvent { }
+7.9 关键开发注意事项
+技艺需实时计算：每次熟练度变化后调用RecalculateYiJi()更新面板值。技艺不是存储值，而是计算值，这样避免了存储值与实际技能数据不一致的bug。
+知名度无上限：UI需适配大数值显示（可能超过1000）。
+学院路解锁与知名度≥30的第一次招新事件绑定，不可直接通过周数硬编码解锁。第3周只是预期的触发时间，实际触发取决于玩家的知名度积累速度。
+回声Livehouse图标根据第6周选项结果动态显示/隐藏。这要求在DataStore中持久记录第6周的选项选择。
+过激应援次数达2次立即进入厄介结局，不等待第20周。判定逻辑在AdvanceWeek()中每次行动后检查。
+所有选项的进线状态和数值增益需在DataStore中持久记录，供结局判定使用。建议使用Dictionary存储。
+技能每周衰减仅针对难度4-5技能，执行时机在周数推进前（先衰减再+1周）。
+网络瓶颈和场地临时取消通过累计计数器触发。计数器在对应地点行动后递增，并在CheckConditionalEvents()中检查阈值。
+社恐结局的B站私信及短视频为结局演出内容，需在结局系统中实现对应叙事流程。
+所有地点的简短反馈为固定文本，仅需从配置表中按locationId读取对应字符串，无需每次随机生成。
+EventManager订阅管理：任何订阅了EventManager事件的节点，必须在_ExitTree()中调用Unsubscribe取消订阅。忘记取消订阅会导致：① 节点已被销毁但回调仍然存在，触发事件时抛出空引用异常；② 内存泄漏——已销毁节点无法被GC回收。这是事件总线架构中最常见的bug来源。
+CallDeferred的使用场景：当需要在当前帧的所有状态更新完成后再执行逻辑时（如CheckConditionalEvents、切换场景），使用CallDeferred延迟到下一帧，避免时序问题。

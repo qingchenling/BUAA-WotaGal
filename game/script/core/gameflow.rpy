@@ -9,7 +9,7 @@ label game_start:
 
 
 image map:
-    "images/map.png"
+    "images/bg/map.png"
     zoom 1.5
 label week_loop:
     
