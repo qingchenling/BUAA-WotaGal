@@ -1,22 +1,16 @@
-## 主菜单 - 整体容器
+## 主菜单 - 按钮容器（右上角）
 style mainMenu_vbox:
-    xalign 0.5
-    yalign 0.5
-    spacing 20
-
-## 主菜单 - 标题
-style mainMenu_title:
-    size 80
-    textalign 0.5
-    xalign 0.5
-    color "#ffffff"
+    xalign 1.0
+    xoffset -150
+    ypos 150
+    spacing 16
 
 ## 主菜单 - 按钮
 style mainMenu_button:
-    xalign 0.5
-    size_group "mainMenu"
+    background None
+    padding (12, 8)
 
 style mainMenu_button_text:
-    size 36
-    color "#ffffff"
+    size 28
+    color "#ffffffcc"
     hover_color "#ffcc00"
