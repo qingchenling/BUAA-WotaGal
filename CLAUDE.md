@@ -72,6 +72,13 @@ renpy.exe F:\game\galgame\WOTA            # Windows
 - `shahe_unlocked`, `yongman_unlocked` (bool) — map location locks
 - `has_recruited`, `has_first_stage` (bool) — group route flags
 
+## Ren'Py dialogue quoting rules (CRITICAL)
+
+- **Never use ASCII double quotes `"` inside dialogue strings.** Ren'Py parses `character"dialogue"` and will terminate the string at the first inner `"`. This causes "end of line expected" errors.
+- **Use corner brackets `「」` for all inner quotations.** E.g., write `l"完成了从「喊」到「舞」的蜕变"` not `l"完成了从"喊"到"舞"的蜕变"`.
+- **Use `p"Name：「dialogue」"` for unnamed one-off speakers** (driver, senior student, etc.) rather than the invalid `"Name""dialogue"` pattern.
+- **One markdown line = one `p"..."` line.** When converting from the script markdown, every single line of narration (lines without a character prefix like `玩家：`) becomes its own `p"..."` line in rpy. Never merge multiple markdown lines into one long `p"..."` — players need to click through one sentence at a time.
+
 ## Notes
 
 - Godot 相关文件已移至 `temp/` 目录，项目完全基于 Ren'Py。

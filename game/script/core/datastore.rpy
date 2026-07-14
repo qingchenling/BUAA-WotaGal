@@ -1,9 +1,10 @@
 #游戏初始化是全局变量存储
 #把所有变量尽量都写在这里，然后调整变量的方法写作api中，这样后续变量改变时可以看谁调用的api中函数
 #基础属性（数值）
-default week = 1
+default week = 0
 default fame = 0
 default person_skill = 18
+default practice_skill_number = 3
 
 
 

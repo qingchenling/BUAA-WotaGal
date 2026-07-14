@@ -57,6 +57,11 @@ Thumbs.db
 /renpy.sh
 /renpy.app
 
+game/cache/
+game/saves/
+*.rpyc
+log.txt
+
 # Android 密钥[reference:17]
 *.keystore
 

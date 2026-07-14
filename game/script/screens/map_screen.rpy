@@ -25,3 +25,8 @@ screen map_screen():
         ypos 500
 
         action Call("loc_practice")
+
+    textbutton "继续":
+        xpos 1600
+        ypos 800
+        action Return()
