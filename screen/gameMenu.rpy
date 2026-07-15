@@ -1,94 +1,57 @@
-## 通用子菜单布局：左侧导航栏 + 分割线 + 右侧内容区
-##
-## 使用方式：
-##   screen save():
-##       tag menu
-##       use game_menu("保存"):
-##           # 右侧内容
-##
-## 参数：
-##   title  - 当前子页面标题，显示在导航栏顶部
-##   scroll - 设为 "viewport" 时右侧内容区使用可滚动 viewport，
-##            设为 "vpgrid" 时使用纵向网格滚动，不传则直接放置内容
-screen game_menu(title, scroll=None):
+## 子菜单布局
+## 由其他 screen 调用
 
-    # frame 包裹以支持 background，padding 归零使内容填满
+screen game_menu(title):
+
+    add "#123456"
+
+    ## 系统变量 main_menu
+    if main_menu:
+        key "game_menu" action Return()
+
+    frame:
+        xfill True
+        ysize 100
+        background "#00aadd"
+        
+        text title:
+            size 100
+
+        frame:
+            background "#ffffff"
+            xfill True
+            ysize 3
+            yalign 1.0
+
     frame:
         xfill True
         yfill True
-        background "#000000dd"
-        padding (0, 0)
+        padding (30,150,30,150)
+        
+        transclude
+
+    frame:
+        xfill True
+        yalign 1.0
+        ysize 100
+        background "#dddddd"
 
         hbox:
-            style_prefix "gameMenu"
             xfill True
-            yfill True
+            box_align 0.5
+            spacing 100
 
-            # ── 左侧导航栏 ──
-            vbox:
-                style_prefix "gameMenu_nav"
+            style_prefix "gameMenu_list"
 
-                # 当前页面标题
-                label title
+            textbutton "Save" action ShowMenu("save")
+            textbutton "Load" action ShowMenu("load")
+            textbutton "Config" action ShowMenu("config")
+            textbutton "Title" action MainMenu()
+            textbutton "Quit" action Quit()
+            textbutton "Back" action Return()
+            
 
-                null height 40
+## --------- Style ---------
 
-                # 仅在游戏内（右键菜单）显示
-                if not main_menu:
-                    textbutton "历史" action ShowMenu("history")
-                    textbutton "保存" action ShowMenu("save")
-
-                textbutton "读取" action ShowMenu("load")
-                textbutton "设置" action ShowMenu("preferences")
-                textbutton "帮助" action ShowMenu("help")
-                if main_menu:
-                    textbutton "主菜单" action ShowMenu("main_menu")
-                else:
-                    textbutton "主菜单" action MainMenu()
-
-                textbutton "退出" action Quit(confirm=not main_menu)
-
-            # ── 分割线 ──
-            fixed:
-                xsize 2
-                yfill True
-                add Solid("#ffffff44")
-
-            # ── 右侧内容区 ──
-            frame:
-                style_prefix ""
-                background None
-                yfill True
-                xfill True
-                if scroll == "viewport":
-
-                    viewport:
-                        scrollbars "vertical"
-                        mousewheel True
-                        draggable True
-                        pagekeys True
-                        
-                        xfill True
-                        yfill True
-                        
-                        transclude
-
-                elif scroll == "vpgrid":
-
-                    vpgrid:
-                        cols 1
-                        yinitial 1.0
-
-                        scrollbars "vertical"
-                        mousewheel True
-                        draggable True
-                        pagekeys True
-
-                        xfill True
-                        yfill True
-
-                        transclude
-
-                else:
-
-                    transclude
+style gameMenu_list_button_text:
+    size 64
