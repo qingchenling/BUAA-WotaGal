@@ -22,6 +22,8 @@ define P = Character("[player_name]")
 
 label test:
 
+    $ save_name = "Test Cha"
+
     "Test 1: 背景切换"
 
     scene black
@@ -172,3 +174,25 @@ label test:
         "Bad End":
 
             jump test_bad
+
+
+label test_good:
+
+    scene bg bg3
+
+    show a happy
+
+    C_a "Good End"
+
+    return
+
+
+label test_bad:
+
+    scene bg bg4
+
+    show a sad
+
+    C_a "Bad End"
+
+    return

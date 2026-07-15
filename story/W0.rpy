@@ -15,6 +15,8 @@ default player_name = "player name"
 define P = Character("[player_name]")
 
 label W0:
+    
+    $ save_name = "序章：第 0 周"
 
     scene bg practice_room
 
