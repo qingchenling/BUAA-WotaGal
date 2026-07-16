@@ -1,28 +1,11 @@
-
-image bg practice_room = Placeholder("bg")
-image bg sky = Placeholder("bg")
-
-define C_lin = Character("林若")
-image lin normal = Placeholder("boy")
-image lin surprise = Placeholder("boy")
-
-define C_song = Character("宋柯")
-image song normal = Placeholder("boy")
-image song angry = Placeholder("boy")
-
-default player_name = "player name"
-
-define P = Character("[player_name]")
-
 label W0:
     
     $ save_name = "序章：第 0 周"
 
-    scene bg practice_room
-
-    show song normal at left
-
-    show lin normal at right
+    scene BG practice_room
+    play music BGM6
+    show Song normal
+    show Lin normal
 
     C_lin "你在看什么？歇了这么久？帮我磨一下这个莉莉丝吧。"
 
@@ -33,33 +16,125 @@ label W0:
     C_song "……………………我打算……退出宅艺研了。"
     C_song "你让我冷静一下。"
 
-    show lin surprise
+    show Lin surprise
 
     C_lin "……这个…是什么……恶作剧吗？"
     C_lin "次的爬台吗？不就是因为咱们技艺不行，所以才得赶紧来多加练啊！"
 
-    show song angry
+    show Song angry
 
     C_song "够了！你技练的再好有什么用？"
     C_song "这种唐氏活动到底哪里好玩了？"
+
+    play sound Action
+
     C_song "我从没觉得打艺开心过！"
 
+    play sound Run
     hide song with dissolve
 
     C_lin "啊…"
 
-    show lin normal
+    show Lin normal
 
     C_lin "…………………"
 
-    scene bg sky with fade
+    scene black with fade
 
     $ player_name = renpy.input("请输入你的名字：")
     $ player_name = player_name.strip()
 
+    scene sky with fade
+
+    P "……"
     P "……嗯？"
 
-    P "竟然没有做完"
+    C_ye "快到了，起来吧。"
 
+    "我猛地坐起来。"
+    "下了高铁，在车站前面叫了辆出租车，好像不知不觉地就睡着了。"
 
+    NPC_driver "差不多到地方了，该停在哪里好呢?"
+
+    P "诶? 啊，能往前开一点，拐一下么"
+    P "(服务态度真恶劣啊，这个司机……)"
+    P "又不是让你给我送到惠织，为什么不能再走一段？）"
+
+    "停车，搬运行李。"
+
+    NPC_driver "北航啊，最近的事闹得够大的"
+
+    "在下车时候听到了司机的嘟囔。"
+
+    play music BGM2
+    scene BG school_gate with dissolve
+
+    P "好多行李……嘛，算了，假期瘫好久了"
+
+    "吐了口气，双手叉腰，把背大幅后仰。"
+    "大概是一直坐在车上的缘故吧，腰际的骨头嘎嘎作响。"
+
+    show ye normal
+
+    C_ye "去放行李吧，别让梦拓等久了"
+    C_ye "女生宿舍应该是在那边，我先过去了"
+
+    hide ye
+
+    "小学时叶子便和我同班，我们在同一个初中，同一个高中，然后…进入了同一所大学。"
+    "中学时叶子比我优秀得多，征文拿奖，学生会干部。"
+    "相比之下，我对什么都是三分钟热度。练了羽毛球，高三因学业繁重放弃了，高考完想着自学画画和日语，结果只完成了五十音图的学习。"
+    "比起光芒万丈的现充，我仿佛更像一只沉迷纸片人的阴暗私斋。"
+    "她能来这里靠的是实力，进的直博班，而我则是走的强基。"
+
+    P "嗯——！累死人啦啊啊啊————！"
+
+    "因为从小学家长会便认识，双方父母又都喜欢放养，便让我跟叶子俩人搭伴儿过来。"
+    "从家里出来，睡了一晚的硬卧，又坐了两个小时的车。"
+    "但站到校门前的这一刻，我的内心无比激动。"
+    "凭借我高中三年来的不懈努力与高考时的超常发挥，最终我与叶子一同踏入了这所高等学府的大门。我相信这将是崭新生活的开始。"
+
+    show BG BJOne
+    play music BGM1
+
+    "路上有背着电脑的成熟老登，停满飞机的小公园……我对大学的新生活充满期待。"
+    "更重要的是…"
+
+    P "飞梦ACG联盟！"
+
+    "作为北航的知名社团，可追溯至1998年，是北京最早的高校ACG社团之一。"
+    "曾连续多年被评为北航“艺术类五星级社团” ，在社团认可度投票中常年位列第一。"
+    "下辖超过10个分部和50余个分群，覆盖了ACGN文化的几乎所有领域。"
+    "甚至拥有自己的虚拟歌姬兼看板娘——飞梦姬。"
+    "近年来，冬梦节，空之航路在b站上广为流传。在入学前我便对这个社团心存向往。"
+    "尤其是其中的宅艺研，我在暑假便被那应援的光弧吸引，更是自己观看练习了小半个假期。"
+    
+    NPC_senior "……"
+    NPC_senior "嗯…你是******班的**吗？"
+    
+    P "啊！是的"
+
+    NPC_senior "我是你的航研梦拓，就差你了，放完行李我带你转转学校吧。"
+
+    P "誒，好嘞"
+    
+    play sound Action
+
+    P "先辈先辈（，能先给我讲讲咱们学校的飞梦嘛"
+    
+    NPC_senior "哈，你对二次元感兴趣啊，不过，北航最近的事你不知道吗"
+
+    P "嗯？"
+
+    stop music
+
+    NPC_senior "就这个啊，学校禁止一切动漫相关，据说什么活动都不给批，现在飞梦快停摆了"
+    
+    "《不算抗议的抗议》\n……\n…………"
+    
+    P "诶？"
+    P "诶！！！！！！！！！！"
+
+    scene black with fade
+    $ renpy.movie_cutscene("assets/op.mp4")
     return
