@@ -16,20 +16,20 @@ Ren'Py 8.5.3
 请构建如下的文件树：
 ```
 .
-├── game
-│   ├── audio
-│   ├── cache
-│   ├── docs
-│   ├── gui
-│   └── ...
-└── log.txt
+├── audio/
+├── assets/
+├── core/
+├── screen/
+├── story/
+├── tl/
+├── clear.bat
+├── clear.sh
+└── project.rpy
 ```
 
 将仓库文件放入 `game` 文件夹，从 Ren'Py 运行。
 
 ## 开发相关
-
-开发相关文档在 `doc/`。
 
 提交修改前运行 `clean.sh` 或 `clean.bat`。
 
@@ -37,30 +37,11 @@ Ren'Py 8.5.3
 
 ### 代码规范
 
-1. 每个 `lable` 必须对应一个`return` 关闭，
+1. 每个 `lable` 必须对应一个`return` 关闭。
+2. 向 `main` 进行 PR 时，填写一下发开进度
 
-### 工作分配
+### 开发进度
 
-#### 系统层
+#### V.alpha-1
 
-玩家的属性系统。
-
-项目 `config` 和其他参数。
-
-`screen` 函数。
-
-#### UI 层
-
-项目 `gui` 参数设置。
-
-前端 GUI，`style` 函数。
-
-UI/UX 预设计。
-
-#### 剧情层
-
-负责 `lable start`。
-
-剧情大纲。
-
-游戏整体流程和各个游戏部分的连接，如分支跳转。
+实现了 Galgame 需要的常见功能。
