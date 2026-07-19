@@ -20,3 +20,53 @@ screen say(who, what):
             text what id "what":
                 size 32
                 font say_text_font
+
+    hbox:
+        xalign 0.5
+        yalign 1.0
+        spacing 10
+
+        button:
+            action QuickSave()
+
+            text "Q.Save"
+
+        button:
+            action QuickLoad()
+
+            text "Q.Load"
+
+        button:
+            action ShowMenu("save")
+
+            text "Save"
+
+        button:
+            action ShowMenu("load")
+
+            text "Load"
+
+        button:
+            action Preference("auto-forward", "toggle")
+
+            text "Auto"
+
+        button:
+            action Skip()
+
+            text "Skip"
+
+        button:
+            action MainMenu()
+
+            text "Title"
+
+        button:
+            action Quit()
+
+            text "Quit"
+
+        button:
+            action ShowMenu("config")
+
+            text "Config"

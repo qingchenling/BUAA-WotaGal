@@ -12,3 +12,4 @@ define config.thumbnail_width = 860
 
 ## Config 默认值
 default preferences.text_cps = 20
+default preferences.afm_time = 5
