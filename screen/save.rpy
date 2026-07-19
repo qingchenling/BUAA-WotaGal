@@ -25,25 +25,32 @@ screen file_slots:
                     xfill True
                     yfill True
                     background "#00000080"
+                    padding (10,10,10,10)
 
-                    hbox:
-                        xfill True
-                        ysize 32
-                        spacing 20
-
-                        text FileSlotName(i, 10, 'A', 'Q'):
-                            size 32
-                        text FileTime(i, format="%Y/%m/%d %H:%M"):
-                            size 28
+                    text FileSlotName(i, 10, 'A', 'Q'):
+                        size 32
+                        font en_font
+                    text FileTime(i, format="%Y/%m/%d %H:%M"):
+                        xalign 1.0
+                        size 28
+                        font en_font
 
                     add FileScreenshot(i):
                         xalign 0.5
-                        ypos 32
+                        ypos 48
                         fit "contain"
+
+                    if not FileLoadable(i):
+                        text "NO DATA":
+                            xalign 0.5
+                            ypos 108
+                            size 42
+                            color "#555555"
 
                     text FileSaveName(i):
                         xfill True
                         yalign 0.95
+                        size 32
 
     hbox:
         yalign 1.0

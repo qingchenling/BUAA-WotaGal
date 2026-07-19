@@ -28,7 +28,7 @@ screen game_menu(title):
     frame:
         xfill True
         yfill True
-        padding (30,150,30,200)
+        padding (30,150,30,150)
         
         transclude
 
