@@ -15,6 +15,8 @@ screen say(who, what):
             if who is not None:
                 text who id "who":
                     size 32
+                    font say_text_font
 
             text what id "what":
                 size 32
+                font say_text_font

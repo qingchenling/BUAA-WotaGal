@@ -137,4 +137,5 @@ label W0:
 
     scene black with fade
     $ renpy.movie_cutscene("assets/op.mp4")
+    jump W1
     return
