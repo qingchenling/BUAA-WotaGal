@@ -16,14 +16,32 @@ Ren'Py 8.5.3
 请构建如下的文件树：
 ```
 .
-├── game
-│   ├── audio
-│   ├── cache
-│   ├── docs
-│   ├── gui
-│   └── ...
-└── log.txt
+├── audio/
+├── assets/
+├── core/
+├── screen/
+├── story/
+├── tl/
+├── clear.bat
+├── clear.sh
+└── project.rpy
 ```
 
 将仓库文件放入 `game` 文件夹，从 Ren'Py 运行。
 
+## 开发相关
+
+提交修改前运行 `clean.sh` 或 `clean.bat`。
+
+在 dev 分支开发，当确认可以正常运行后可以通过 Pull Request 向 `main` 分支合并。保证 `main` 分支一定可以正常运行。
+
+### 代码规范
+
+1. 每个 `lable` 必须对应一个`return` 关闭。
+2. 向 `main` 进行 PR 时，填写一下发开进度
+
+### 开发进度
+
+#### V.alpha-1
+
+实现了 Galgame 需要的常见功能。
