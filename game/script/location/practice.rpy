@@ -1,5 +1,4 @@
-#这一块写不同地点触发的行为
-
+# 练习场地行为
 
 label loc_practice:
 
@@ -7,35 +6,56 @@ label loc_practice:
 
     p"你来到练习场地，开始今天的训练。"
 
-    $ add_skill(3)
-    $ add_fame(2)
+    $ options, picks = choose_skills()
+    $ pick_index = 0
 
-    # 选取候选技能，提取到简单变量给菜单用
-    $ skill_options = choose_skill()
-    $ s0_name = skill_options[0]['name']
-    $ s0_diff = skill_options[0]['difficulty']
-    $ s0_mastery = skill_options[0]['mastery']
-    $ s0_id   = skill_options[0]['id']
-    $ s1_name = skill_options[1]['name']
-    $ s1_diff = skill_options[1]['difficulty']
-    $ s1_mastery = skill_options[1]['mastery']
-    $ s1_id   = skill_options[1]['id']
-    $ s2_name = skill_options[2]['name']
-    $ s2_diff = skill_options[2]['difficulty']
-    $ s2_mastery = skill_options[2]['mastery']
-    $ s2_id   = skill_options[2]['id']
+label practice_pick:
+    if pick_index >= picks:
+        jump practice_done
 
-    menu:
-        "要重点练习哪个技？"
-        "[s0_name] (难度 [s0_diff], 熟练度 [s0_mastery])":
-            $ chosen_id = s0_id
-        "[s1_name] (难度 [s1_diff], 熟练度 [s1_mastery])":
-            $ chosen_id = s1_id
-        "[s2_name] (难度 [s2_diff], 熟练度 [s2_mastery])":
-            $ chosen_id = s2_id
+    # 构建动态菜单
+    $ menu_items = []
+    python:
+        for s in options:
+            sid = s['id']
+            color = get_mastery_color(s['hidden_mastery'])
+            tag = "【新】" if s['is_new'] else ""
+            caption = "{color=" + color + "}" + s['name'] + "{/color}"
+            caption += " 难度" + str(s['difficulty'])
+            caption += " 熟练度" + str(s['mastery'])
+            title_str = get_mastery_title(s['hidden_mastery'])
+            if title_str:
+                caption += " " + title_str
+            if tag:
+                caption += " " + tag
+            menu_items.append((caption, sid))
 
-    $ skill_name, add_mastery = practice_skill(chosen_id)
-    p"练习了[skill_name]，熟练度提高[add_mastery]"
+        menu_items.append(("跳过剩余练习", -1))
+
+    $ chosen_id = renpy.display_menu(menu_items)
+
+    if chosen_id == -1:
+        jump practice_done
+
+    $ name, gain, maxed, diff = practice_skill(chosen_id)
+
+    if maxed:
+        p"[name] 已达到「大成」！技艺值将在本周结算时额外提升。"
+    else:
+        p"练习了 [name]，熟练度 +[gain]"
+
+    $ pick_index += 1
+
+    if pick_index < picks:
+        $ options = choose_skills()[0]
+        jump practice_pick
+    jump practice_done
+
+label practice_done:
+    $ ps_gain = apply_weekly_ps()
+    if ps_gain > 0:
+        p"本周技艺值提升了 [ps_gain] 点。"
+    p"当前技艺值：[person_skill]，名气：[fame]"
 
     $ next_week()
     return

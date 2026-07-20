@@ -1,28 +1,20 @@
-#地图界面
-#其他页面也在这里写
-
-
+# 地图界面
 
 screen map_screen():
 
-    text "第 [week]周" xpos 30 ypos 30
+    text "第 [week] 周" xpos 30 ypos 30 size 28
 
-    text "名声[fame]" xpos 30 ypos 70
+    text "名气 [fame]" xpos 30 ypos 70 size 22
 
-    text "个人技艺值 [person_skill]" xpos 30 ypos 110
-    #这里的位置还需要调整一下
+    text "技艺值 [person_skill]" xpos 30 ypos 110 size 22
 
-    textbutton "{color=#DC143C}练习场地1{/color}":
+    $ picks = get_pick_count()
+    text "本周可选 [picks] 次" xpos 30 ypos 150 size 20 color "#AAAAAA"
+
+    textbutton "{color=#DC143C}练习场地{/color}":
 
         xpos 100
         ypos 300
-
-        action Call("loc_practice")
-    
-    textbutton "{color=#DC143C}练习场地2{/color}":
-
-        xpos 100
-        ypos 500
 
         action Call("loc_practice")
 

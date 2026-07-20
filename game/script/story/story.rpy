@@ -1,87 +1,73 @@
-# 游戏的脚本可置于此文件中。
+# 周常剧情 & 事件判定
 
-# 声明此游戏使用的角色。颜色参数可使角色姓名着色。
-
-
-
-#角色常量
-define p = Character(None)
-define l =Character("林若")
-define s = Character("宋柯")
-define w =Character("我")
-define y = Character("叶子")
-define n = Character("夜凪")
-define h = Character("灰白")
-
-image lawn:
-    "images/bg/lawn.png"
-    zoom 1.5
-# 游戏在此开始。
-image danceroom:
-    "images/bg/danceroom.png"
-    zoom 1.5
-# 游戏在此开始。
-image skymirror1:
-    "images/bg/skymirror.png"
-    zoom 1.5
-
-label start:
-    scene danceroom
-
-    l"你在看什么？歇了这么久？帮我磨一下这个莉莉丝吧。"
-    s "……。"
-    l"……嗯？"
-    s"……………………我打算……退出宅艺研了。"
-    l"你让我冷静一下。"
-    l"……这个…是什么……恶作剧吗？"
-    l"上次的爬台吗？不就是因为咱们技艺不行，所以才得赶紧来多加练啊！"
-    s"够了！你技练的再好有什么用？"
-    s"这种幼稚活动到底哪里好玩了？"
-    s"我从没觉得打艺开心过！"
-    l"你在说什么？你明明——"
-    s"就这样吧。"
-
-    jump game_start
-
-label game_start:
-    scene danceroom
-    w"……"
-    w"……嗯？"
-    y"快到了，起来吧。"
-    p"我猛地坐起来。"
-
-
-    jump week_loop
-   
-# label map:
-#根据日期周期来的
+# 周常剧情：根据 week 数字跳转到对应标签 w1~wN
 label weekly_story_check:
 
     $ target_label = "w" + str(week)
-    call expression target_label
-
+    call expression target_label from _call_expression
 
     return
 
+# 表演事件判定
+label performance_event_check:
 
-#条件剧情
+    if not is_performance_week():
+        return
+
+    if week == 5:
+        call performance_week5 from _call_performance_week5
+    elif week == 9:
+        call performance_week9 from _call_performance_week9
+    elif week == 14:
+        call performance_week14 from _call_performance_week14
+    elif week == 18:
+        call performance_week18 from _call_performance_week18
+
+    return
+
+# 条件剧情
 label special_event_check:
 
     if fame >= 10 and not has_first_stage:
-
         $ has_first_stage = True
+        p"首次演出完成，名气开始积累……"
 
-        #call event_first_show
-        p"开始演出"
     return
 
-    
-
-#占个位，主要写一下日常的插科打诨
+# 日常随机事件
 label random_event_check:
-    $ lucky = random.randint(1, 100)
+    $ lucky = renpy.random.randint(1, 100)
     p"今天的幸运数字是 [lucky] ！"
 
+    return
 
+# ============================================================
+# 表演事件
+# ============================================================
+label performance_week5:
+    $ gained = apply_performance_fame()
+    p"第 5 周 —— 初期小演。"
+    p"你在学院晚会上首次登台，虽然紧张，但光弧划破黑暗的一刻，一切都值了。"
+    p"本次表演获得名气 [gained]！累计名气：[fame]。"
+    return
 
+label performance_week9:
+    $ gained = apply_performance_fame()
+    p"第 9 周 —— 中期汇演。"
+    p"经过半个学期的磨炼，你的技艺有了长足进步。这次表演吸引了更多目光。"
+    p"本次表演获得名气 [gained]！累计名气：[fame]。"
+    return
+
+label performance_week14:
+    $ gained = apply_performance_fame()
+    p"第 14 周 —— 后期主舞台。"
+    p"期末的联合演出，是这学期最重要的舞台。你全力以赴。"
+    p"本次表演获得名气 [gained]！累计名气：[fame]。"
+    return
+
+label performance_week18:
+    $ gained = apply_performance_fame()
+    p"第 18 周 —— 终演。"
+    p"这是本学期最后一次登台。你回顾这一路走来，每一道光弧都在心中留下了不可磨灭的痕迹。"
+    p"本次表演获得名气 [gained]！累计名气：[fame]。"
     return
