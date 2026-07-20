@@ -1,7 +1,7 @@
 screen config:
     tag menu
     
-    use game_menu("Config"):
+    use game_menu("CONFIG"):
         grid 2 1:
             xfill True
 

@@ -24,7 +24,10 @@ screen file_slots:
                     action FileAction(i)
                     xfill True
                     yfill True
-                    background "#00000080"
+                    background Transform(
+                        "assets/save.png",
+                        fit="contain"
+                    )
                     padding (10,10,10,10)
 
                     text FileSlotName(i, 10, 'A', 'Q'):

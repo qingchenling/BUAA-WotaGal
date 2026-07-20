@@ -7,19 +7,32 @@ screen say(who, what):
     window id "window":
         xfill True
         yalign 1.0
-        ysize 300
-        background "#000000cc"
-        padding (360, 60, 120, 60)
+        ysize 350
+        add "assets/say_bck.png":
+            xalign 0.5
+            yalign 0.5
+            xoffset 10
+            yoffset 10
+        add "assets/say_fnt.png":
+            xalign 0.5
+            yalign 0.5
 
-        vbox:
-            if who is not None:
-                text who id "who":
-                    size 32
-                    font say_text_font
-
-            text what id "what":
-                size 32
+        if who is not None:
+            add "assets/namebox.png":
+                xalign 0.25
+                yoffset 5
+            text who id "who":
+                xpos 0.28
+                ypos 0.04
+                size 36
                 font say_text_font
+
+        text what id "what":
+            xpos 0.2
+            ypos 0.25
+            xsize 0.6
+            size 32
+            font say_text_font
 
     hbox:
         xalign 0.5

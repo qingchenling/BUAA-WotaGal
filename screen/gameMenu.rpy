@@ -17,12 +17,13 @@ screen game_menu(title):
         background "#00aadd"
         
         text title:
-            size 100
+            yoffset -42
+            size 120
 
         frame:
             background "#ffffff"
             xfill True
-            ysize 3
+            ysize 4
             yalign 1.0
 
     frame:
