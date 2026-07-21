@@ -23,6 +23,7 @@ screen main_menu():
 ## --------- Style ---------
 
 style mainMenu_button:
+    activate_sound btn_sound
     xalign 0.5
 
 style mainMenu_button_text:

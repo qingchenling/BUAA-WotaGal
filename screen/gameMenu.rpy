@@ -51,6 +51,7 @@ screen game_menu(title):
             
             button:
                 action ShowMenu("save")
+                activate_sound btn_sound
 
                 hovered SetVariable("menu_hover", "save")
                 unhovered SetVariable("menu_hover", "")
@@ -75,6 +76,7 @@ screen game_menu(title):
 
             button:
                 action ShowMenu("load")
+                activate_sound btn_sound
 
                 hovered SetVariable("menu_hover", "load")
                 unhovered SetVariable("menu_hover", "")
@@ -99,6 +101,7 @@ screen game_menu(title):
 
             button:
                 action ShowMenu("config")
+                activate_sound btn_sound
 
                 hovered SetVariable("menu_hover", "config")
                 unhovered SetVariable("menu_hover", "")
@@ -123,6 +126,7 @@ screen game_menu(title):
 
             button:
                 action MainMenu()
+                activate_sound btn_sound
 
                 hovered SetVariable("menu_hover", "title")
                 unhovered SetVariable("menu_hover", "")
@@ -147,6 +151,7 @@ screen game_menu(title):
 
             button:
                 action Quit()
+                activate_sound btn_sound
 
                 hovered SetVariable("menu_hover", "quit")
                 unhovered SetVariable("menu_hover", "")
@@ -171,6 +176,7 @@ screen game_menu(title):
 
             button:
                 action Return()
+                activate_sound btn_sound
 
                 hovered SetVariable("menu_hover", "back")
                 unhovered SetVariable("menu_hover", "")

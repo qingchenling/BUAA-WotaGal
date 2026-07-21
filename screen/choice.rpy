@@ -7,6 +7,7 @@ screen choice(items):
         for i in items:
             button:
                 action i.action
+                activate_sound btn_sound
                 text i.caption:
                     size 32
                     color "#ffffff"

@@ -27,7 +27,7 @@ define NPC_senior = Character("学长")
 
 define BGM1 = ""
 define BGM2 = ""
-define BGM6 = ""
+define BGM6 = "audio/bgm/bgm6.mp3"
 
 
 

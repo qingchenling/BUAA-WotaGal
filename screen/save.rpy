@@ -22,6 +22,7 @@ screen file_slots:
             for i in range(1, 11):
                 button:
                     action FileAction(i)
+                    activate_sound btn_sound
                     xfill True
                     yfill True
                     background Transform(
