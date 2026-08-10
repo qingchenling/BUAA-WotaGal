@@ -1,8 +1,12 @@
+image CG flash = Placeholder("bg")
+
 label W0:
     
     $ save_name = "序章：第 0 周"
 
-    scene BG practice_room
+    scene CG 
+
+    scene BG yongman
     play music BGM6
     show Song normal
     show Lin normal
@@ -19,7 +23,10 @@ label W0:
     show Lin surprise
 
     C_lin "……这个…是什么……恶作剧吗？"
-    C_lin "次的爬台吗？不就是因为咱们技艺不行，所以才得赶紧来多加练啊！"
+
+# undo: 此处NETA樱花萌放
+
+    C_lin "上次的爬台吗？不就是因为咱们技艺不行，所以才得赶紧来多加练啊！"
 
     show Song angry
 
@@ -57,6 +64,9 @@ label W0:
     NPC_driver "差不多到地方了，该停在哪里好呢?"
 
     P "诶? 啊，能往前开一点，拐一下么"
+
+    NPC_driver "啊——就给你放这吧，进去掉头太麻烦了"
+
     P "(服务态度真恶劣啊，这个司机……)"
     P "又不是让你给我送到惠织，为什么不能再走一段？）"
 
@@ -137,5 +147,19 @@ label W0:
 
     scene black with fade
     $ renpy.movie_cutscene("assets/op.mp4")
+
+    "我缓了好一会儿，终于接受了这个消息。"
+
+    NPC_senior "其实像飞梦这样的社团，只是名义上停止了活动，被强制废了社"
+    NPC_senior "但是大家都知道，有像你们这样的同好，私下的交流啊活动啊是管不到的"
+    NPC_senior "现在各种飞梦下属的企鹅群应该都活跃着呢"
+
+    P "是啊，我相信我们之间的羁绊，不是一纸禁令就能禁止的"
+
+    NPC_senior "现在校方疯狂管控消息。想要破局，飞梦的知名度还是不够啊"
+
+    P "（看来只有足够的知名度才能够复兴飞梦…）"
+    P "（那就让我，来成为学园偶像，拯救社团吧！（bushi））"
+
     jump W1
     return

@@ -11,3 +11,4 @@ screen map():
     textbutton "永慢剧场":
         xalign 0.3
         yalign 0.6
+        action Return("yongman")
