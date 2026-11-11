@@ -27,6 +27,10 @@ define OPTIONS_STEP = 200
 define PICKS_STEP = 200
 define MAX_PICKS = 3
 
+# 技能池分级开放：早期只出基础技，逐段放开
+define TIER2_WEEK = 4    # 第 4 周起开放 d2
+define TIER3_WEEK = 10   # 第 10 周起开放 d3
+
 # 表演（W18 之后进入结局卷，不再走日常循环）
 define PERFORMANCE_WEEKS = [5, 9, 14]
 

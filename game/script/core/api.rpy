@@ -99,12 +99,23 @@ init python:
     # ============================================================
     # 选技逻辑
     # ============================================================
+    def max_skill_difficulty(w=None):
+        """当前周次允许出现的最高技难度。"""
+        if w is None:
+            w = week
+        if w < TIER2_WEEK:
+            return 1
+        if w < TIER3_WEEK:
+            return 2
+        return 3
+
     def choose_skills(ps=None):
         """
         返回 (options_list, picks)：
           options_list: 候选技列表，每个包含 id/name/difficulty/mastery/is_new
           picks: 本周可选次数
         已知技抽取权重 = max(1, 100 - mastery)
+        新技只从「当前周次已开放难度」里抽。
         """
         global skill_pool
 
@@ -114,8 +125,11 @@ init python:
         option_count = get_option_count(ps)
         pick_count = get_pick_count(ps)
 
+        tier_cap = max_skill_difficulty()
+
         known = [s for s in skill_pool if s["mastery"] > 0]
-        unlearned = [s for s in skill_pool if s["mastery"] == 0]
+        unlearned = [s for s in skill_pool
+                     if s["mastery"] == 0 and s["difficulty"] <= tier_cap]
 
         # 已知技：按权重取 KNOWN_SLOTS 个
         known_slots = min(KNOWN_SLOTS, len(known))
