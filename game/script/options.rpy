@@ -1,4 +1,4 @@
-﻿## 此文件包含有可自定义您游戏的设置。
+## 此文件包含有可自定义您游戏的设置。
 ##
 ## 以“##”开头的语句是注释，您不应该对其取消注释。以“#”开头的语句是注释掉的代码，
 ## 在适用的时候您可能需要对其取消注释。
@@ -113,6 +113,24 @@ define config.window_hide_transition = Dissolve(.2)
 ## 控制默认的文字显示速度。默认的 0 为瞬间，而其他数字则是每秒显示出的字符数。
 
 default preferences.text_cps = 50
+
+
+## 默认允许快进未读文本。
+## 关掉（默认）时快进只跳过「已读过」的台词，遇到没读过的就停下，
+## 表现就是「有的剧情能快进、有的不能」。设为 True 后 Ctrl / Tab 可以一路跳过。
+
+default preferences.skip_unseen = True
+
+## 允许快进（全局开关，显式写出来便于排查）
+
+define config.allow_skipping = True
+
+init python:
+    # 一次性迁移：旧存档的 persistent 里可能已经存了 skip_unseen = False，
+    # 这时上面的 default 不生效，需要在这里改写一次；之后尊重玩家在设置里的选择。
+    if not getattr(persistent, "skip_unseen_fix_v1", False):
+        preferences.skip_unseen = True
+        persistent.skip_unseen_fix_v1 = True
 
 
 ## 默认的自动前进延迟。数字越大，等待时间越长，有效范围为 0 - 30。
