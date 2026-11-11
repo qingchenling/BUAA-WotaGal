@@ -55,6 +55,9 @@ define weathers = [
 # 技名与人数取自社团技表《焲痕技表.xlsx》，缺额用中文WOTA艺wiki的高阶技补齐。
 # 难度规则：会的人越多越基础（top25 → d1，中间25 → d2，最冷门2个 + wiki 8个 → d3）。
 # 魅力规则：d1/d2/d3 底值 2/4/6，火把类 +2（对圈外人更亮眼）。
+# 技名与人数取自社团技表《焲痕技表.xlsx》，缺额用中文WOTA艺wiki的高阶技补齐。
+# 难度规则：会的人越多越基础（top25 → d1，中间25 → d2，最冷门2个 + wiki 8个 → d3）。
+# 魅力规则：d1/d2/d3 底值 2/4/6，火把类 +2（对圈外人更亮眼）。
 define SKILL_DEFS = [
     # d1 基础技
     {"id":  1, "name": "嘘月",          "difficulty": 1, "charm": 4},  # 会7人
@@ -94,7 +97,7 @@ define SKILL_DEFS = [
     {"id": 33, "name": "ロトの纹章",    "difficulty": 2, "charm": 4},  # 会1人
     {"id": 34, "name": "伊奘诺尊",      "difficulty": 2, "charm": 4},  # 会1人
     {"id": 35, "name": "名刀·银纸竹光","difficulty": 2, "charm": 4},  # 会1人
-    {"id": 36, "name": "阿弥陀如来像",  "difficulty": 2, "charm": 6},  # 会1人
+    {"id": 36, "name": "如来像",        "difficulty": 2, "charm": 6},  # 会1人
     {"id": 37, "name": "摩耶",          "difficulty": 2, "charm": 4},  # 会1人
     {"id": 38, "name": "深雪",          "difficulty": 2, "charm": 6},  # 会1人
     {"id": 39, "name": "清华拳",        "difficulty": 2, "charm": 4},  # 会1人
@@ -111,7 +114,7 @@ define SKILL_DEFS = [
     {"id": 50, "name": "鹤望兰",        "difficulty": 2, "charm": 6},  # 会1人
 
     # d3 高阶技
-    {"id": 51, "name": "独萼孪华·两生花","difficulty": 3, "charm": 8},  # 会1人
+    {"id": 51, "name": "两生花",        "difficulty": 3, "charm": 8},  # 会1人
     {"id": 52, "name": "诗岚·双极",    "difficulty": 3, "charm": 8},  # 会1人
     {"id": 53, "name": "八雷神",        "difficulty": 3, "charm": 6},  # wiki
     {"id": 54, "name": "伏魔御厨子",    "difficulty": 3, "charm": 6},  # wiki
