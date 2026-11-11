@@ -49,6 +49,12 @@ define weathers = [
 # 技名与人数取自社团技表《焲痕技表.xlsx》，缺额用中文WOTA艺wiki的高阶技补齐。
 # 难度规则：会的人越多越基础（top25 → d1，中间25 → d2，最冷门2个 + wiki 8个 → d3）。
 # 魅力规则：d1/d2/d3 底值 2/4/6，火把类 +2（对圈外人更亮眼）。
+# 技名与人数取自社团技表《焲痕技表.xlsx》，缺额用中文WOTA艺wiki的高阶技补齐。
+# 难度规则：会的人越多越基础（top25 → d1，中间25 → d2，最冷门2个 + wiki 8个 → d3）。
+# 魅力规则：d1/d2/d3 底值 2/4/6，火把类 +2（对圈外人更亮眼）。
+# 技名与人数取自社团技表《焲痕技表.xlsx》，缺额用中文WOTA艺wiki的高阶技补齐。
+# 难度规则：会的人越多越基础（top25 → d1，中间25 → d2，最冷门2个 + wiki 8个 → d3）。
+# 魅力规则：d1/d2/d3 底值 2/4/6，火把类 +2（对圈外人更亮眼）。
 define SKILL_DEFS = [
     # d1 基础技
     {"id":  1, "name": "嘘月",          "difficulty": 1, "charm": 4},  # 会7人
@@ -80,7 +86,7 @@ define SKILL_DEFS = [
     # d2 进阶技
     {"id": 26, "name": "十拳剑·鲜血",  "difficulty": 2, "charm": 4},  # 会2人
     {"id": 27, "name": "和歌鸢舞",      "difficulty": 2, "charm": 6},  # 会2人
-    {"id": 28, "name": "平等院凤凰堂凤凰像·凤凰之舞","difficulty": 2, "charm": 6},  # 会2人
+    {"id": 28, "name": "凤凰之舞",      "difficulty": 2, "charm": 6},  # 会2人
     {"id": 29, "name": "昭和四十七门",  "difficulty": 2, "charm": 4},  # 会2人
     {"id": 30, "name": "煌刀",          "difficulty": 2, "charm": 6},  # 会2人
     {"id": 31, "name": "神代樱",        "difficulty": 2, "charm": 4},  # 会2人
@@ -88,7 +94,7 @@ define SKILL_DEFS = [
     {"id": 33, "name": "ロトの纹章",    "difficulty": 2, "charm": 4},  # 会1人
     {"id": 34, "name": "伊奘诺尊",      "difficulty": 2, "charm": 4},  # 会1人
     {"id": 35, "name": "名刀·银纸竹光","difficulty": 2, "charm": 4},  # 会1人
-    {"id": 36, "name": "平等院凤凰堂阿弥陀如来像","difficulty": 2, "charm": 6},  # 会1人
+    {"id": 36, "name": "阿弥陀如来像",  "difficulty": 2, "charm": 6},  # 会1人
     {"id": 37, "name": "摩耶",          "difficulty": 2, "charm": 4},  # 会1人
     {"id": 38, "name": "深雪",          "difficulty": 2, "charm": 6},  # 会1人
     {"id": 39, "name": "清华拳",        "difficulty": 2, "charm": 4},  # 会1人
