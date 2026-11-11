@@ -46,74 +46,75 @@ define weathers = [
 # ============================================================
 # 技能定义（60个，恒定不变）
 # ============================================================
-# 技名取自 中文WOTA艺wiki（wotagei.huijiwiki.com）分类:技。
-# 难度分档依据：門系/村正/蛇系等基础技为 d1；派生、复合、双持类为 d2；奥义、多段终结技为 d3。
+# 技名与人数取自社团技表《焲痕技表.xlsx》，缺额用中文WOTA艺wiki的高阶技补齐。
+# 难度规则：会的人越多越基础（top25 → d1，中间25 → d2，最冷门2个 + wiki 8个 → d3）。
+# 魅力规则：d1/d2/d3 底值 2/4/6，火把类 +2（对圈外人更亮眼）。
 define SKILL_DEFS = [
-    # d1 基础技 (25个)
-    {"id": 1,  "name": "OAD",      "difficulty": 1, "charm": 2},
-    {"id": 2,  "name": "罗曼斯",    "difficulty": 1, "charm": 3},
-    {"id": 3,  "name": "十字架",    "difficulty": 1, "charm": 2},
-    {"id": 4,  "name": "雷蛇",      "difficulty": 1, "charm": 3},
-    {"id": 5,  "name": "白门",      "difficulty": 1, "charm": 2},
-    {"id": 6,  "name": "赤门",      "difficulty": 1, "charm": 2},
-    {"id": 7,  "name": "虎之门",    "difficulty": 1, "charm": 3},
-    {"id": 8,  "name": "半藏门",    "difficulty": 1, "charm": 2},
-    {"id": 9,  "name": "光化门",    "difficulty": 1, "charm": 3},
-    {"id": 10, "name": "仁王门",    "difficulty": 1, "charm": 2},
-    {"id": 11, "name": "守礼门",    "difficulty": 1, "charm": 2},
-    {"id": 12, "name": "长安门",    "difficulty": 1, "charm": 3},
-    {"id": 13, "name": "村正",      "difficulty": 1, "charm": 3},
-    {"id": 14, "name": "村雨",      "difficulty": 1, "charm": 2},
-    {"id": 15, "name": "天照",      "difficulty": 1, "charm": 3},
-    {"id": 16, "name": "天翔",      "difficulty": 1, "charm": 2},
-    {"id": 17, "name": "天空兜",    "difficulty": 1, "charm": 2},
-    {"id": 18, "name": "青雀",      "difficulty": 1, "charm": 3},
-    {"id": 19, "name": "红",        "difficulty": 1, "charm": 2},
-    {"id": 20, "name": "苍",        "difficulty": 1, "charm": 2},
-    {"id": 21, "name": "初春",      "difficulty": 1, "charm": 3},
-    {"id": 22, "name": "谷雨",      "difficulty": 1, "charm": 2},
-    {"id": 23, "name": "流水加速",  "difficulty": 1, "charm": 2},
-    {"id": 24, "name": "矢波",      "difficulty": 1, "charm": 3},
-    {"id": 25, "name": "式波",      "difficulty": 1, "charm": 2},
+    # d1 基础技
+    {"id":  1, "name": "嘘月",          "difficulty": 1, "charm": 4},  # 会7人
+    {"id":  2, "name": "天照",          "difficulty": 1, "charm": 2},  # 会7人
+    {"id":  3, "name": "月读",          "difficulty": 1, "charm": 2},  # 会7人
+    {"id":  4, "name": "村正",          "difficulty": 1, "charm": 2},  # 会7人
+    {"id":  5, "name": "樱华",          "difficulty": 1, "charm": 2},  # 会7人
+    {"id":  6, "name": "水仙夫人",      "difficulty": 1, "charm": 2},  # 会7人
+    {"id":  7, "name": "消力",          "difficulty": 1, "charm": 2},  # 会7人
+    {"id":  8, "name": "烈剑",          "difficulty": 1, "charm": 2},  # 会7人
+    {"id":  9, "name": "烈火舞",        "difficulty": 1, "charm": 4},  # 会7人
+    {"id": 10, "name": "金刚",          "difficulty": 1, "charm": 2},  # 会7人
+    {"id": 11, "name": "镇魂曲",        "difficulty": 1, "charm": 2},  # 会7人
+    {"id": 12, "name": "雷蛇",          "difficulty": 1, "charm": 2},  # 会7人
+    {"id": 13, "name": "青雀",          "difficulty": 1, "charm": 2},  # 会7人
+    {"id": 14, "name": "龙击剑",        "difficulty": 1, "charm": 4},  # 会6人
+    {"id": 15, "name": "不知火",        "difficulty": 1, "charm": 4},  # 会5人
+    {"id": 16, "name": "娜露梅亚",      "difficulty": 1, "charm": 4},  # 会5人
+    {"id": 17, "name": "圣白莲",        "difficulty": 1, "charm": 4},  # 会4人
+    {"id": 18, "name": "旋空弧月",      "difficulty": 1, "charm": 2},  # 会4人
+    {"id": 19, "name": "九吹雪",        "difficulty": 1, "charm": 2},  # 会3人
+    {"id": 20, "name": "仙女座",        "difficulty": 1, "charm": 2},  # 会3人
+    {"id": 21, "name": "北航拳",        "difficulty": 1, "charm": 2},  # 会3人
+    {"id": 22, "name": "洛水天依",      "difficulty": 1, "charm": 4},  # 会3人
+    {"id": 23, "name": "逆抚",          "difficulty": 1, "charm": 4},  # 会3人
+    {"id": 24, "name": "宝石天照",      "difficulty": 1, "charm": 2},  # 会2人
+    {"id": 25, "name": "天元ノ斩",      "difficulty": 1, "charm": 4},  # 会2人
 
-    # d2 进阶技 (25个)
-    {"id": 26, "name": "鹤望兰",    "difficulty": 2, "charm": 5},
-    {"id": 27, "name": "胡蝶刃",    "difficulty": 2, "charm": 4},
-    {"id": 28, "name": "苍月剑",    "difficulty": 2, "charm": 5},
-    {"id": 29, "name": "虚闪·握",   "difficulty": 2, "charm": 4},
-    {"id": 30, "name": "十拳剑",    "difficulty": 2, "charm": 5},
-    {"id": 31, "name": "千鸟",      "difficulty": 2, "charm": 4},
-    {"id": 32, "name": "白千鸟",    "difficulty": 2, "charm": 5},
-    {"id": 33, "name": "二羽蝶",    "difficulty": 2, "charm": 4},
-    {"id": 34, "name": "二羽鹤",    "difficulty": 2, "charm": 4},
-    {"id": 35, "name": "月华门",    "difficulty": 2, "charm": 4},
-    {"id": 36, "name": "应天门",    "difficulty": 2, "charm": 5},
-    {"id": 37, "name": "焰狱门",    "difficulty": 2, "charm": 4},
-    {"id": 38, "name": "霞门",      "difficulty": 2, "charm": 4},
-    {"id": 39, "name": "樱田门",    "difficulty": 2, "charm": 5},
-    {"id": 40, "name": "不知火蛇",  "difficulty": 2, "charm": 4},
-    {"id": 41, "name": "吹雪蛇",    "difficulty": 2, "charm": 5},
-    {"id": 42, "name": "春风蛇",    "difficulty": 2, "charm": 4},
-    {"id": 43, "name": "黑蝶蛇",    "difficulty": 2, "charm": 4},
-    {"id": 44, "name": "鬼人蛇",    "difficulty": 2, "charm": 5},
-    {"id": 45, "name": "超重力蛇",  "difficulty": 2, "charm": 5},
-    {"id": 46, "name": "闪电蛇",    "difficulty": 2, "charm": 4},
-    {"id": 47, "name": "流星蛇",    "difficulty": 2, "charm": 5},
-    {"id": 48, "name": "双剑蛇",    "difficulty": 2, "charm": 5},
-    {"id": 49, "name": "JK蛇",      "difficulty": 2, "charm": 4},
-    {"id": 50, "name": "羚黄泉",    "difficulty": 2, "charm": 5},
+    # d2 进阶技
+    {"id": 26, "name": "十拳剑·鲜血",  "difficulty": 2, "charm": 4},  # 会2人
+    {"id": 27, "name": "和歌鸢舞",      "difficulty": 2, "charm": 6},  # 会2人
+    {"id": 28, "name": "平等院凤凰堂凤凰像·凤凰之舞","difficulty": 2, "charm": 6},  # 会2人
+    {"id": 29, "name": "昭和四十七门",  "difficulty": 2, "charm": 4},  # 会2人
+    {"id": 30, "name": "煌刀",          "difficulty": 2, "charm": 6},  # 会2人
+    {"id": 31, "name": "神代樱",        "difficulty": 2, "charm": 4},  # 会2人
+    {"id": 32, "name": "行界阵",        "difficulty": 2, "charm": 6},  # 会2人
+    {"id": 33, "name": "ロトの纹章",    "difficulty": 2, "charm": 4},  # 会1人
+    {"id": 34, "name": "伊奘诺尊",      "difficulty": 2, "charm": 4},  # 会1人
+    {"id": 35, "name": "名刀·银纸竹光","difficulty": 2, "charm": 4},  # 会1人
+    {"id": 36, "name": "平等院凤凰堂阿弥陀如来像","difficulty": 2, "charm": 6},  # 会1人
+    {"id": 37, "name": "摩耶",          "difficulty": 2, "charm": 4},  # 会1人
+    {"id": 38, "name": "深雪",          "difficulty": 2, "charm": 6},  # 会1人
+    {"id": 39, "name": "清华拳",        "difficulty": 2, "charm": 4},  # 会1人
+    {"id": 40, "name": "炎火",          "difficulty": 2, "charm": 4},  # 会1人
+    {"id": 41, "name": "烈火爆炎刃",    "difficulty": 2, "charm": 4},  # 会1人
+    {"id": 42, "name": "煌珑",          "difficulty": 2, "charm": 4},  # 会1人
+    {"id": 43, "name": "狩猎神忯大剑",  "difficulty": 2, "charm": 6},  # 会1人
+    {"id": 44, "name": "白虎纹章",      "difficulty": 2, "charm": 4},  # 会1人
+    {"id": 45, "name": "胧刀",          "difficulty": 2, "charm": 6},  # 会1人
+    {"id": 46, "name": "蓝鸟",          "difficulty": 2, "charm": 4},  # 会1人
+    {"id": 47, "name": "诗岚·极",      "difficulty": 2, "charm": 6},  # 会1人
+    {"id": 48, "name": "霞斩",          "difficulty": 2, "charm": 4},  # 会1人
+    {"id": 49, "name": "风雅",          "difficulty": 2, "charm": 4},  # 会1人
+    {"id": 50, "name": "鹤望兰",        "difficulty": 2, "charm": 6},  # 会1人
 
-    # d3 高阶技 (10个)
-    {"id": 51, "name": "八雷神",        "difficulty": 3, "charm": 7},
-    {"id": 52, "name": "伏魔御厨子",    "difficulty": 3, "charm": 6},
-    {"id": 53, "name": "乖离剑",        "difficulty": 3, "charm": 6},
-    {"id": 54, "name": "王虚之闪光",    "difficulty": 3, "charm": 7},
-    {"id": 55, "name": "王虚·破",       "difficulty": 3, "charm": 7},
-    {"id": 56, "name": "重奏虚闪",      "difficulty": 3, "charm": 6},
-    {"id": 57, "name": "天地无双刀",    "difficulty": 3, "charm": 6},
-    {"id": 58, "name": "唯我独尊",      "difficulty": 3, "charm": 7},
-    {"id": 59, "name": "万象圣堂",      "difficulty": 3, "charm": 6},
-    {"id": 60, "name": "神威灵装·十番", "difficulty": 3, "charm": 7},
+    # d3 高阶技
+    {"id": 51, "name": "独萼孪华·两生花","difficulty": 3, "charm": 8},  # 会1人
+    {"id": 52, "name": "诗岚·双极",    "difficulty": 3, "charm": 8},  # 会1人
+    {"id": 53, "name": "八雷神",        "difficulty": 3, "charm": 6},  # wiki
+    {"id": 54, "name": "伏魔御厨子",    "difficulty": 3, "charm": 6},  # wiki
+    {"id": 55, "name": "乖离剑",        "difficulty": 3, "charm": 6},  # wiki
+    {"id": 56, "name": "王虚之闪光",    "difficulty": 3, "charm": 6},  # wiki
+    {"id": 57, "name": "王虚·破",      "difficulty": 3, "charm": 6},  # wiki
+    {"id": 58, "name": "重奏虚闪",      "difficulty": 3, "charm": 6},  # wiki
+    {"id": 59, "name": "天地无双刀",    "difficulty": 3, "charm": 6},  # wiki
+    {"id": 60, "name": "唯我独尊",      "difficulty": 3, "charm": 6},  # wiki
 ]
 
 # ============================================================
