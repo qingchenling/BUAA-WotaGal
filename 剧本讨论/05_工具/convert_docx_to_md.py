@@ -106,7 +106,7 @@ def convert_docx_to_md(input_path, output_path):
 
 
 if __name__ == '__main__':
-    base = 'F:/game/galgame/WOTA/剧本讨论'
+    base = 'F:/game/galgame/WOTA/剧本讨论/01_主线剧本'
 
     # File 1: 剧本（完整设定）(1) — newer version
     src1 = os.path.join(base, '剧本（完整设定） (1).docx')

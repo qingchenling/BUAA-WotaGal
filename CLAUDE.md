@@ -34,6 +34,14 @@ assets/
   project.json            # Ren'Py build config
   progressive_download.txt
 剧本讨论/                 # Design documents (script drafts, character profiles)
+  00_总纲/                # Dev master doc, character profiles, WOTA culture reference
+  01_主线剧本/            # Full main script (docx = source, md = generated)
+  02_叶子线/              # Leaf route, all drafts; 叶子线_文学修订.md is current
+  03_林若线/              # Lin Ruo route
+  04_参考素材/            # Insertable scenes, character art prompts
+  05_工具/                # docx->md converter, assistant prompt
+  99_归档/                # Zips and old snapshots
+  README.md               # Index + version lineage + known traps
 ```
 
 ## Architecture conventions
@@ -82,7 +90,7 @@ renpy.exe F:\game\galgame\WOTA            # Windows
 ## Notes
 
 - Godot 相关文件已移至 `temp/` 目录，项目完全基于 Ren'Py。
-- `剧本讨论/开发指导.docx` 是早期 AI 生成的项目文档，可能过时。README 和 `core/variables.md` 是更好的参考。
+- `剧本讨论/00_总纲/开发指导.docx` 是早期 AI 生成的项目文档，可能过时。README 和 `core/variables.md` 是更好的参考。
 - Design docs in `剧本讨论/` are the source of truth for story and character writing.
 - Do NOT commit `.rpyc`/`.rpyb` compiled files, `cache/`, `saves/`, `log.txt`, `errors.txt`, or `traceback.txt` (all in `.gitignore`).
 - Ren'Py 构建时图标需放在项目根目录；当前在 `assets/icons/`，构建前需复制回根目录。

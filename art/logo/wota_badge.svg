@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a142e"/>
+      <stop offset="0.55" stop-color="#060b18"/>
+      <stop offset="1" stop-color="#02040a"/>
+    </linearGradient>
+    <linearGradient id="trail" x1="250" y1="0" x2="774" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff7a2f"/>
+      <stop offset="0.45" stop-color="#ffd8b0"/>
+      <stop offset="0.55" stop-color="#d8f4ff"/>
+      <stop offset="1" stop-color="#59d6ff"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="18" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softglow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="26"/>
+    </filter>
+    <radialGradient id="halo" cx="0.5" cy="0.42" r="0.55">
+      <stop offset="0" stop-color="#2b62b8" stop-opacity="0.35"/>
+      <stop offset="0.7" stop-color="#2b62b8" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#2b62b8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="warm" cx="0.5" cy="0.64" r="0.42">
+      <stop offset="0" stop-color="#ff7a2f" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#ff7a2f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <rect width="1024" height="1024" fill="url(#halo)"/>
+  <rect width="1024" height="1024" fill="url(#warm)"/>
+
+  <circle cx="512" cy="512" r="452" fill="none" stroke="#82afeb" stroke-opacity="0.22" stroke-width="2"/>
+  <circle cx="512" cy="512" r="430" fill="none" stroke="#b4d2ff" stroke-opacity="0.16" stroke-width="1"/>
+  <path d="M 338 278 A 290 290 0 0 1 686 278" fill="none" stroke="#5abeff" stroke-opacity="0.35" stroke-width="5" stroke-linecap="round"/>
+
+  <path d="M250 350 L375 660 L512 350 L649 660 L774 350" fill="none" stroke="url(#trail)" stroke-width="58" stroke-linecap="round" stroke-linejoin="round" opacity="0.28" filter="url(#softglow)"/>
+  <path d="M250 350 L375 660 L512 350 L649 660 L774 350" fill="none" stroke="url(#trail)" stroke-width="38" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  <path d="M250 350 L375 660 L512 350 L649 660 L774 350" fill="none" stroke="#ffffff" stroke-opacity="0.86" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <text x="512" y="862" text-anchor="middle" font-family="Source Han Sans SC, Noto Sans CJK SC, sans-serif" font-size="128" font-weight="600" letter-spacing="10" fill="#ffffff">WOTA</text>
+  <text x="512" y="946" text-anchor="middle" font-family="Source Han Sans SC, Noto Sans CJK SC, sans-serif" font-size="44" letter-spacing="14" fill="#a9c4e8">光 棒</text>
+</svg>
