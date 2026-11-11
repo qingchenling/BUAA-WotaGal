@@ -1,33 +1,33 @@
-2026-11-11 14:50:37 UTC
+2026-11-11 15:21:11 UTC
 Windows-11-10.0.22000-SP0
 Ren'Py 8.5.2.26010301
 
-Early init took 36 ms
+Early init took 29 ms
 Loading error handling took 16 ms
-Loading script took 175 ms
-Loading save slot metadata took 21 ms
+Loading script took 136 ms
+Loading save slot metadata took 18 ms
 Loading persistent took 0 ms
-Running init code took 44 ms
+Running init code took 41 ms
 Loading analysis data took 2 ms
-Analyze and compile ATL took 2 ms
+Analyze and compile ATL took 1 ms
 Reloading save slot metadata took 10 ms
 Backing up script files to 'C:\\Users\\admin\\AppData\\Roaming/RenPy/backups/WOTA':
-Dump and make backups took 17 ms
+Dump and make backups took 7 ms
 Cleaning cache took 0 ms
 Making clean stores took 0 ms
-Initial gc took 23 ms
+Initial gc took 21 ms
 DPI scale factor: 1.500000
 nvdrs: Loaded, about to disable thread optimizations.
 nvdrs: Disabled thread optimizations.
-Creating interface object took 159 ms
+Creating interface object took 163 ms
 Init translation took 0 ms
-Cleaning stores took 1 ms
+Cleaning stores took 0 ms
 Load screen analysis took 0 ms
-Analyze screens took 6 ms
-Save screen analysis took 6 ms
-Save pyanalysis took 3 ms
-Save bytecode took 18 ms
-﻿Ren'Py 8.5.2.26010301 lint report, generated at: Wed Nov 11 22:50:38 2026
+Analyze screens took 5 ms
+Save screen analysis took 8 ms
+Save pyanalysis took 0 ms
+Save bytecode took 17 ms
+﻿Ren'Py 8.5.2.26010301 lint report, generated at: Wed Nov 11 23:21:12 2026
 
 game/images/images.rpy:2 Image bg rooftop uses file 'images/bg/roof.png', which is not loadable.
 
