@@ -243,6 +243,45 @@ init python:
         return gained
 
     # ============================================================
+    # 行动地点
+    # ============================================================
+    def get_skill(sid):
+        for s in skill_pool:
+            if s["id"] == sid:
+                return s
+        return None
+
+    def get_unlocked_skills():
+        """已解锁 = 练过至少一次（hidden_mastery > 0）"""
+        return [s for s in skill_pool if s["hidden_mastery"] > 0]
+
+    def boost_all_mastery(delta=10):
+        """天空之境：所有已解锁技熟练度 +delta，返回受益技数量"""
+        n = 0
+        for s in skill_pool:
+            if s["hidden_mastery"] > 0:
+                s["hidden_mastery"] = min(MASTERY_HIDDEN_SOFT_CAP, s["hidden_mastery"] + delta)
+                s["mastery"] = min(MASTERY_DISPLAY_MAX, s["hidden_mastery"])
+                n += 1
+        return n
+
+    def calc_fame_for(sids):
+        """指定若干技的表演名气，公式与全量表演一致"""
+        total = 0
+        for sid in sids:
+            s = get_skill(sid)
+            if s is not None:
+                total += s["charm"] * (s["hidden_mastery"] / 10.0) ** 2
+        return int(total)
+
+    def apply_show_fame(sids):
+        """执行一次指定曲目的表演"""
+        global fame
+        gained = calc_fame_for(sids)
+        fame += gained
+        return gained
+
+    # ============================================================
     # 作弊码
     # ============================================================
     def toggle_inherit():

@@ -9,7 +9,8 @@ label loc_practice:
 
     scene black
 
-    p"你来到练习场地，开始今天的训练。"
+    p"咏曼剧场旁边的舞蹈房。今晚是周常训练。"
+    p"林若演示了一遍完整的动作。你终于学会了。"
 
     $ options, picks = choose_skills()
     $ pick_index = 0
