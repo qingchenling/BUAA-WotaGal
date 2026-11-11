@@ -27,9 +27,15 @@ define OPTIONS_STEP = 200
 define PICKS_STEP = 200
 define MAX_PICKS = 3
 
-# 表演
-define PERFORMANCE_WEEKS = [5, 9, 14, 18]
-define TOTAL_WEEKS = 18
+# 表演（W18 之后进入结局卷，不再走日常循环）
+define PERFORMANCE_WEEKS = [5, 9, 14]
+
+# 时间轴节点
+define COMMON_ROUTE_END = 10    # 共通线最后一整周（W10）
+define ROUTE_SPLIT_WEEK = 11    # W11 开场选线
+define FINAL_CHOICE_WEEK = 17   # W17 最终选择（HE / BE）
+define ENDING_WEEK = 18         # W18 起进入结局卷，覆盖 W18-W20
+define TOTAL_WEEKS = 21         # W0-W20 共 21 周
 
 # 天气值（常数）
 define weathers = [
@@ -127,6 +133,31 @@ default member_count = 2
 # 个人线
 default has_recruited = False
 default has_first_stage = False
+
+# ============================================================
+# 路线系统
+# ============================================================
+# route：None = 共通线，"rin" 林若 / "yoko" 叶子 / "songke" 宋柯
+default route = None
+default route_label = "共通线"   # 给界面显示用，随 route 同步
+default final_choice = None      # None / "he" / "be"
+default ending = None            # 结算后的结局标识
+
+# 好感与知名度
+default affection_rin = 0
+default affection_yoko = 0
+default fame_club = 0            # 圈内知名度（宋柯线 HE 条件）
+
+# 路线关键事件旗标
+default flag_co_choreo = False    # 林若线：共同编舞
+default flag_record_reply = False # 叶子线：记录与回应
+default flag_light_sync = False   # 宋柯线：灯光同步试验
+
+# 本周行动状态
+default has_acted = False
+
+# 结局面板用的临时显示变量
+default rank_text = ""
 
 # 本周练习追踪（每次练习重置）
 default weekly_new_skills = 0

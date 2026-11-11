@@ -2,6 +2,11 @@
 
 label loc_practice:
 
+    # 一周只能行动一次，防止反复刷数值
+    if has_acted:
+        p "这周已经练过了，剩下的时间由你自己安排。"
+        return
+
     scene black
 
     p"你来到练习场地，开始今天的训练。"
@@ -57,5 +62,6 @@ label practice_done:
         p"本周技艺值提升了 [ps_gain] 点。"
     p"当前技艺值：[person_skill]，名气：[fame]"
 
-    $ next_week()
+    # 只标记本周已行动，周数由 gameflow 统一推进
+    $ has_acted = True
     return

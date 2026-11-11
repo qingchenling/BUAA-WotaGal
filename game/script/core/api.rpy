@@ -254,8 +254,14 @@ init python:
     # 周推进
     # ============================================================
     def next_week():
-        global week
+        """推进到下一周，并清空本周的行动与练习统计。"""
+        global week, has_acted
+        global weekly_new_skills, weekly_picks, weekly_maxed_difficulty
         week += 1
+        has_acted = False
+        weekly_new_skills = 0
+        weekly_picks = 0
+        weekly_maxed_difficulty = []
 
     def is_performance_week(w=None):
         if w is None:
@@ -264,6 +270,67 @@ init python:
 
     def is_game_over():
         return week >= TOTAL_WEEKS
+
+    # ============================================================
+    # 路线
+    # ============================================================
+    def set_route(value):
+        global route, route_label
+        route = value
+        route_label = {
+            "rin": "林若线",
+            "yoko": "叶子线",
+            "songke": "宋柯线",
+        }.get(value, "共通线")
+
+    def route_title():
+        return {
+            "rin": "林若线",
+            "yoko": "叶子线",
+            "songke": "宋柯线",
+        }.get(route, "共通线")
+
+    def he_available():
+        """当前路线的 HE 条件是否满足。BE 永远可选。"""
+        if route == "rin":
+            return person_skill >= 75 and flag_co_choreo
+        if route == "yoko":
+            return affection_yoko >= 60 and flag_record_reply
+        if route == "songke":
+            return fame_club >= 120 and flag_light_sync
+        return False
+
+    def he_requirement_text():
+        """给玩家看的 HE 条件说明。"""
+        if route == "rin":
+            return "技艺值 75 以上，并完成「共同编舞」"
+        if route == "yoko":
+            return "叶子好感 60 以上，并完成「记录与回应」"
+        if route == "songke":
+            return "圈内知名度 120 以上，并完成「灯光同步试验」"
+        return "尚未选择路线"
+
+    def resolve_ending():
+        """根据路线与最终选择结算结局标识。"""
+        global ending
+        if route is None:
+            ending = "none"
+        elif final_choice == "he" and he_available():
+            ending = route + "_he"
+        else:
+            ending = route + "_be"
+        return ending
+
+    def add_affection(who, value=1):
+        global affection_rin, affection_yoko
+        if who == "rin":
+            affection_rin = min(100, affection_rin + value)
+        elif who == "yoko":
+            affection_yoko = min(100, affection_yoko + value)
+
+    def add_fame_club(value=1):
+        global fame_club
+        fame_club += value
 
     # ============================================================
     # 剧情变量
