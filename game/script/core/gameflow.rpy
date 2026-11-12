@@ -15,7 +15,7 @@
 
 image map:
     "images/bg/map.png"
-    zoom 1.5
+    zoom 1.0854
 
 label week_loop:
 

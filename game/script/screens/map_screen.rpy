@@ -1,52 +1,128 @@
 # 地图界面
+#
+# 布局：1122x995 的校园图按 1080 高度铺满（缩放 1.0854，宽 1217，左侧偏移 351），
+# 三个地点用图标直接标在地图对应位置。
+
+define MAP_ZOOM = 1.0854
 
 screen map_screen():
 
-    # 顶部周次
-    text "第 [week] 周" xpos 30 ypos 30 size 28
+    # 地图上不显示底部快捷菜单，避免压住地图
+    on "show" action SetVariable("quick_menu", False)
+    on "hide" action SetVariable("quick_menu", True)
 
-    # 个人线显示当前路线
-    if route is not None:
-        text "[route_label]" xpos 30 ypos 66 size 20 color "#DC143C"
+    # 底色与地图边缘同色，左右留白不会突兀
+    add Solid("#002E3B")
 
-    text "名气 [fame]" xpos 30 ypos 110 size 22
-
-    text "技艺值 [person_skill]" xpos 30 ypos 150 size 22
-
-    if route == "yoko":
-        text "叶子好感 [affection_yoko]" xpos 30 ypos 190 size 20 color "#AAAAAA"
-    elif route == "songke":
-        text "圈内知名度 [fame_club]" xpos 30 ypos 190 size 20 color "#AAAAAA"
-    elif route == "rin":
-        text "林若好感 [affection_rin]" xpos 30 ypos 190 size 20 color "#AAAAAA"
+    # 地图底图（自己画，避免从地点返回后残留别的背景）
+    add "images/bg/map.png" zoom MAP_ZOOM xalign 0.5 yalign 0.5
 
     $ picks = get_pick_count()
-    text "本周可选 [picks] 次" xpos 30 ypos 230 size 20 color "#AAAAAA"
 
-    # 沙河校区地点
-    $ locs = [
-        ("咏曼剧场", "loc_practice", True,                     "抽 5 选 2 学新技"),
-        ("天空之境", "loc_sky",      True,                     "所有已解锁技 熟练度 +10"),
-        ("北京壹号", "loc_beijing",  len(get_unlocked_skills()) >= 3, "选 3 技换名气（需会 3 个技）"),
-    ]
+    # ---------------- 顶部信息 ----------------
+    frame:
+        background "#0B1A1F99"
+        padding (20, 14)
+        xpos 28
+        ypos 24
 
-    vbox:
-        xpos 100
-        ypos 320
-        spacing 18
+        vbox:
+            spacing 4
+            text "第 [week] 周" size 32 color "#FFFFFF"
+            if route is not None:
+                text "[route_label]" size 20 color "#DC143C"
+            text "名气 [fame]　技艺值 [person_skill]" size 21 color "#DCE6E8"
+            if route == "yoko":
+                text "叶子好感 [affection_yoko]" size 18 color "#9FB3B8"
+            elif route == "songke":
+                text "圈内知名度 [fame_club]" size 18 color "#9FB3B8"
+            elif route == "rin":
+                text "林若好感 [affection_rin]" size 18 color "#9FB3B8"
+            text "本周可选 [picks] 次" size 18 color "#9FB3B8"
 
-        for nm, lbl, ok, desc in locs:
-            button:
-                sensitive (ok and not has_acted)
-                action Call(lbl)
-                text (nm + "    " + desc) size 26
+    # ---------------- 地点图标 ----------------
 
-    # 本周行动状态
+    # 咏曼剧场：抽 5 选 2 学技
+    imagebutton:
+        idle "images/ui/icon_yongman.png"
+        hover "images/ui/icon_yongman_hover.png"
+        insensitive "images/ui/icon_yongman_off.png"
+        sensitive (not has_acted)
+        xpos 589
+        ypos 716
+        xanchor 0.5
+        yanchor 0.5
+        action Call("loc_practice")
+
+    text "咏曼剧场" size 24:
+        xpos 589
+        xanchor 0.5
+        ypos 804
+        color ("#FFFFFF" if not has_acted else "#8FA6AC")
+        outlines [(3, "#002E3B", 0, 0)]
+
+    text "抽 5 选 2 学新技" size 17 color "#CFE0E4" outlines [(2, "#002E3B", 0, 0)]:
+        xpos 589
+        xanchor 0.5
+        ypos 834
+
+    # 天空之境：所有已解锁技 熟练度 +10
+    imagebutton:
+        idle "images/ui/icon_sky.png"
+        hover "images/ui/icon_sky_hover.png"
+        insensitive "images/ui/icon_sky_off.png"
+        sensitive (not has_acted)
+        xpos 958
+        ypos 662
+        xanchor 0.5
+        yanchor 0.5
+        action Call("loc_sky")
+
+    text "天空之境" size 24:
+        xpos 958
+        xanchor 0.5
+        ypos 750
+        color ("#FFFFFF" if not has_acted else "#8FA6AC")
+        outlines [(3, "#002E3B", 0, 0)]
+
+    text "已解锁技 熟练度 +10" size 17 color "#CFE0E4" outlines [(2, "#002E3B", 0, 0)]:
+        xpos 958
+        xanchor 0.5
+        ypos 780
+
+    # 北京壹号：选 3 技换名气（需已解锁技 >= 3）
+    $ bei_ok = (not has_acted) and len(get_unlocked_skills()) >= 3
+
+    imagebutton:
+        idle "images/ui/icon_beijing.png"
+        hover "images/ui/icon_beijing_hover.png"
+        insensitive "images/ui/icon_beijing_off.png"
+        sensitive bei_ok
+        xpos 1327
+        ypos 868
+        xanchor 0.5
+        yanchor 0.5
+        action Call("loc_beijing")
+
+    text "北京壹号" size 24:
+        xpos 1327
+        xanchor 0.5
+        ypos 956
+        color ("#FFFFFF" if bei_ok else "#8FA6AC")
+        outlines [(3, "#002E3B", 0, 0)]
+
+    text "选 3 技换名气（需会 3 个技）" size 17 color "#CFE0E4" outlines [(2, "#002E3B", 0, 0)]:
+        xpos 1327
+        xanchor 0.5
+        ypos 986
+
+    # ---------------- 状态与结束 ----------------
     if has_acted:
-        text "本周已行动" xpos 100 ypos 520 size 20 color "#666666"
+        text "本周已行动" xpos 28 ypos 210 size 20 color "#8AA0A6"
 
-    # 结束本周
-    textbutton "结束本周":
-        xpos 1600
-        ypos 800
+    textbutton "结束本周 →":
+        xpos 1860
+        ypos 1020
+        xanchor 1.0
+        yanchor 1.0
         action Return()
