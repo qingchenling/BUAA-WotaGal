@@ -54,25 +54,25 @@ init python:
     # 熟练度颜色
     # ============================================================
     def get_mastery_color(hidden):
-        if hidden >= 300:
+        if hidden >= MASTERY_TIER_GOLD:
             return "#FFD700"  # 金色 造极
-        elif hidden >= 200:
+        elif hidden >= MASTERY_TIER_PURPLE:
             return "#AA55FF"  # 紫色 登峰
-        elif hidden >= 150:
-            return "#00DDFF"  # 青色 入化
-        elif hidden >= 100:
-            return "#00FF88"  # 绿色 大成
+        elif hidden >= MASTERY_TIER_CYAN:
+            return "#00DDFF"  # 青色 大成
+        elif hidden >= MASTERY_TIER_GREEN:
+            return "#00FF88"  # 绿色 熟练
         return "#FFFFFF"       # 白色
 
     def get_mastery_title(hidden):
-        if hidden >= 300:
+        if hidden >= MASTERY_TIER_GOLD:
             return "造极"
-        elif hidden >= 200:
+        elif hidden >= MASTERY_TIER_PURPLE:
             return "登峰"
-        elif hidden >= 150:
-            return "入化"
-        elif hidden >= 100:
+        elif hidden >= MASTERY_TIER_CYAN:
             return "大成"
+        elif hidden >= MASTERY_TIER_GREEN:
+            return "熟练"
         return ""
 
     # ============================================================

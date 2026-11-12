@@ -13,6 +13,12 @@ define MASTERY_DECAY_RATE = 0.7
 define OVERFLOW_DECAY_HALF = 100
 define MASTERY_HIDDEN_SOFT_CAP = 500
 
+# 熟练度称号门槛（判定基于隐藏值；面板显示仍封顶 100）
+define MASTERY_TIER_GREEN = 50    # 熟练
+define MASTERY_TIER_CYAN = 100    # 大成（同时触发技艺值奖励）
+define MASTERY_TIER_PURPLE = 160  # 登峰
+define MASTERY_TIER_GOLD = 220    # 造极
+
 # 技艺值增长
 define PS_GAIN_NEW_SKILL = 25
 define PS_GAIN_PER_PRACTICE = 10
