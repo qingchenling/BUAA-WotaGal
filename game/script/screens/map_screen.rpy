@@ -48,23 +48,23 @@ screen map_screen():
         hover "images/ui/icon_yongman_hover.png"
         insensitive "images/ui/icon_yongman_off.png"
         sensitive (not has_acted)
-        xpos 589
-        ypos 716
+        xpos LOC_YONGMAN_X
+        ypos LOC_YONGMAN_Y
         xanchor 0.5
         yanchor 0.5
         action Call("loc_practice")
 
     text "咏曼剧场" size 24:
-        xpos 589
+        xpos LOC_YONGMAN_X
         xanchor 0.5
-        ypos 804
+        ypos LOC_YONGMAN_LY
         color ("#FFFFFF" if not has_acted else "#8FA6AC")
         outlines [(3, "#002E3B", 0, 0)]
 
     text "抽 5 选 2 学新技" size 17 color "#CFE0E4" outlines [(2, "#002E3B", 0, 0)]:
-        xpos 589
+        xpos LOC_YONGMAN_X
         xanchor 0.5
-        ypos 834
+        ypos LOC_YONGMAN_DY
 
     # 天空之境：所有已解锁技 熟练度 +10
     imagebutton:
@@ -72,23 +72,23 @@ screen map_screen():
         hover "images/ui/icon_sky_hover.png"
         insensitive "images/ui/icon_sky_off.png"
         sensitive (not has_acted)
-        xpos 958
-        ypos 662
+        xpos LOC_SKY_X
+        ypos LOC_SKY_Y
         xanchor 0.5
         yanchor 0.5
         action Call("loc_sky")
 
     text "天空之境" size 24:
-        xpos 958
+        xpos LOC_SKY_X
         xanchor 0.5
-        ypos 750
+        ypos LOC_SKY_LY
         color ("#FFFFFF" if not has_acted else "#8FA6AC")
         outlines [(3, "#002E3B", 0, 0)]
 
     text "已解锁技 熟练度 +10" size 17 color "#CFE0E4" outlines [(2, "#002E3B", 0, 0)]:
-        xpos 958
+        xpos LOC_SKY_X
         xanchor 0.5
-        ypos 780
+        ypos LOC_SKY_DY
 
     # 北京壹号：选 3 技换名气（需已解锁技 >= 3）
     $ bei_ok = (not has_acted) and len(get_unlocked_skills()) >= 3
@@ -98,23 +98,23 @@ screen map_screen():
         hover "images/ui/icon_beijing_hover.png"
         insensitive "images/ui/icon_beijing_off.png"
         sensitive bei_ok
-        xpos 1327
-        ypos 868
+        xpos LOC_BEIJING_X
+        ypos LOC_BEIJING_Y
         xanchor 0.5
         yanchor 0.5
         action Call("loc_beijing")
 
     text "北京壹号" size 24:
-        xpos 1327
+        xpos LOC_BEIJING_X
         xanchor 0.5
-        ypos 956
+        ypos LOC_BEIJING_LY
         color ("#FFFFFF" if bei_ok else "#8FA6AC")
         outlines [(3, "#002E3B", 0, 0)]
 
     text "选 3 技换名气（需会 3 个技）" size 17 color "#CFE0E4" outlines [(2, "#002E3B", 0, 0)]:
-        xpos 1327
+        xpos LOC_BEIJING_X
         xanchor 0.5
-        ypos 986
+        ypos LOC_BEIJING_DY
 
     # ---------------- 状态与结束 ----------------
     if has_acted:
