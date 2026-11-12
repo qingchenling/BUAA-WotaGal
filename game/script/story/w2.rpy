@@ -1,5 +1,7 @@
 label w2:
 
+    scene bg danceroom
+
     show rin at sprite_right
     l"上周教你的OAD，打一遍。"
 

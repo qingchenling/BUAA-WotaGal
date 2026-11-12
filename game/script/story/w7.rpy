@@ -1,5 +1,7 @@
 label w7:
 
+    scene bg danceroom
+
     h"......这样对吗？我感觉我手臂都快拧成麻花了。"
     show rin at sprite_right
     l"不要太紧张。肩膀再放松点，手臂自然展开"

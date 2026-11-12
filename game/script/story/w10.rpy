@@ -1,5 +1,7 @@
 label w10:
 
+    scene bg quietcorner
+
     p"手机在枕边震了一下。你翻了个身，眯着眼划开屏幕。"
 
     show rin at sprite_right

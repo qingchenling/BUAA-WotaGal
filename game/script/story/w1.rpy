@@ -1,5 +1,7 @@
 label w1:
 
+    scene bg danceroom
+
     w"啊啊啊~今天的军训终于结束了，脚都要废了"
 
     p"我打开企鹅。"

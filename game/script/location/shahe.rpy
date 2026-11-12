@@ -14,10 +14,11 @@ label loc_sky:
     $ boosted = boost_all_mastery(10)
 
     if boosted == 0:
+        scene bg skymirror
         p "天空之境。你站了一会儿，发现自己还什么都不会。"
         return
 
-    scene black
+    scene bg skymirror
     p "反复练习，你找到了正确的发力感觉。"
     p "（[boosted] 个技的熟练度 +10）"
 
@@ -41,7 +42,7 @@ label loc_beijing:
         p "至少要会 3 个技，才敢录视频。现在你会 [n_unlocked] 个。"
         return
 
-    scene black
+    scene bg danceroom
     p "北京壹号。你把手机架在窗台上，调了三遍角度。"
 
     $ chosen = []

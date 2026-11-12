@@ -1,5 +1,7 @@
 label w0:
 
+    scene bg uni
+
     show rin at sprite_right
     l"你在看什么？歇了这么久？帮我磨一下这个莉莉丝吧。"
     s"……"

@@ -1,5 +1,7 @@
 label w6:
 
+    scene bg quietcorner
+
     show rin at sprite_right
     l"今晚北投远征，咱们直接在那边吃饭。17:30从学院路出发，坐地铁过去。"
 

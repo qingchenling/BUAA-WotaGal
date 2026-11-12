@@ -1,5 +1,7 @@
 label w3:
 
+    scene bg auditorium
+
     p"看这情况，马上就要百团了诶"
 
     w"（……也不知道叶子百团打算去哪个社）"

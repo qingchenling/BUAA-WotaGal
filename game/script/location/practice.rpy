@@ -7,7 +7,7 @@ label loc_practice:
         p "这周已经练过了，剩下的时间由你自己安排。"
         return
 
-    scene black
+    scene bg danceroom
 
     p"咏曼剧场旁边的舞蹈房。今晚是周常训练。"
     p"林若演示了一遍完整的动作。你终于学会了。"
