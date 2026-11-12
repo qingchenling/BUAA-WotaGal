@@ -20,16 +20,18 @@ label practice_pick:
         jump practice_done
 
     # 构建动态菜单
+    # 注意：标签级 python 块是全局作用域，循环变量不能叫 s / y / w 等，
+    # 否则会把同名 Character 覆盖掉（曾导致 w6 报 "Sayer 's' is not a function"）。
     $ menu_items = []
     python:
-        for s in options:
-            sid = s['id']
-            color = get_mastery_color(s['hidden_mastery'])
-            tag = "【新】" if s['is_new'] else ""
-            caption = "{color=" + color + "}" + s['name'] + "{/color}"
-            caption += " 难度" + str(s['difficulty'])
-            caption += " 熟练度" + str(s['mastery'])
-            title_str = get_mastery_title(s['hidden_mastery'])
+        for sk in options:
+            sid = sk['id']
+            color = get_mastery_color(sk['hidden_mastery'])
+            tag = "【新】" if sk['is_new'] else ""
+            caption = "{color=" + color + "}" + sk['name'] + "{/color}"
+            caption += " 难度" + str(sk['difficulty'])
+            caption += " 熟练度" + str(sk['mastery'])
+            title_str = get_mastery_title(sk['hidden_mastery'])
             if title_str:
                 caption += " " + title_str
             if tag:

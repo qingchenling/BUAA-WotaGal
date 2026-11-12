@@ -1,5 +1,6 @@
 label w2:
 
+    show rin at sprite_right
     l"上周教你的OAD，打一遍。"
 
     p"摆好姿势。双脚内扣略宽于肩，膝盖微弯，两棒交叉在太阳穴上方。光弧划过。"
@@ -64,7 +65,10 @@ label w2:
     w"（……真是一个让人摸不透的社长。）"
 
     w"最近怎么样？"
+    show yoko at sprite_left
     y"还行，不错"
     w"链接1，链接2，帮我看看这两款棒"
 
+    hide rin
+    hide yoko
     return

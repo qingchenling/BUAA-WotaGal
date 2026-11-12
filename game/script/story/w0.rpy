@@ -1,5 +1,6 @@
 label w0:
 
+    show rin at sprite_right
     l"你在看什么？歇了这么久？帮我磨一下这个莉莉丝吧。"
     s"……"
     l"……嗯？"
@@ -15,6 +16,7 @@ label w0:
 
     w"……"
     w"……嗯？"
+    show yoko at sprite_left
     y"快到了，起来吧。"
 
     p"我猛地坐起来。"
@@ -77,4 +79,6 @@ label w0:
     w"诶？"
     w"诶！！！！！！！！！！"
 
+    hide rin
+    hide yoko
     return
